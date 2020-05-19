@@ -1,0 +1,15 @@
+CREATE TABLE `_tmp_senders` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `firstName` varchar(50) DEFAULT NULL,
+  `lastName` varchar(50) DEFAULT NULL,
+  `entity` varchar(50) DEFAULT NULL,
+  `sessionId` varchar(80) DEFAULT NULL,
+  `senderId` varchar(50) DEFAULT NULL,
+  `userId` char(50) NOT NULL COMMENT 'to be renamed user_name',
+  `orgId` int(11) unsigned DEFAULT NULL COMMENT 'redundant column to be eliminated',
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `machineId` varchar(80) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `senders_orgid_index` (`orgId`),
+  KEY `senders_entityid_index` (`entityId`)
+) ENGINE=InnoDB AUTO_INCREMENT=6817238 DEFAULT CHARSET=utf8mb4;

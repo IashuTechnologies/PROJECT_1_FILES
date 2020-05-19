@@ -1,0 +1,23 @@
+CREATE TABLE `clients` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `apiKey` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `apiSecret` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `permissions` text CHARACTER SET utf8mb4,
+  `entities` text CHARACTER SET utf8mb4,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `userId` int(11) unsigned DEFAULT NULL,
+  `disabled` tinyint(1) DEFAULT '0',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  `createdAt` datetime DEFAULT NULL,
+  `updatedAt` datetime DEFAULT NULL,
+  `deletedAt` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `clients_apikey_index` (`apiKey`(191)),
+  KEY `clients_apisecret_index` (`apiSecret`(191)),
+  KEY `clients_orgid_index` (`orgId`),
+  KEY `clients_userid_index` (`userId`),
+  KEY `clients_disabled_index` (`disabled`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

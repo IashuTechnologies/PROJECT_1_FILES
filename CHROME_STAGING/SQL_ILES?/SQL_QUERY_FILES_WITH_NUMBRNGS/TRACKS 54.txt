@@ -1,0 +1,9 @@
+CREATE TABLE `tracks` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `orgId` int(11) NOT NULL,
+  `entityId` int(11) NOT NULL,
+  `processed` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `userId` (`userId`(191))
+) ENGINE=InnoDB AUTO_INCREMENT=5539 DEFAULT CHARSET=utf8;

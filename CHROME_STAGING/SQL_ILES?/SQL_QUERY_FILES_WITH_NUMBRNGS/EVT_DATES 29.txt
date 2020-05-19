@@ -1,0 +1,8 @@
+CREATE TABLE `evt_dates` (
+  `dt` date NOT NULL,
+  `_ent` timestamp NULL DEFAULT NULL,
+  `_snd` timestamp NULL DEFAULT NULL,
+  `_os` timestamp NULL DEFAULT NULL,
+  `_all` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`dt`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

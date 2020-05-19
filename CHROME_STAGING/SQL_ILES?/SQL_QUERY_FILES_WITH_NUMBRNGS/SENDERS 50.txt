@@ -1,0 +1,16 @@
+CREATE TABLE `senders` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `firstName` varchar(50) DEFAULT NULL,
+  `lastName` varchar(50) DEFAULT NULL,
+  `userId` char(50) NOT NULL COMMENT 'to be renamed user_name',
+  `orgId` int(11) unsigned DEFAULT NULL COMMENT 'redundant column to be eliminated',
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `machineId` varchar(80) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `userId_2` (`userId`),
+  UNIQUE KEY `userId` (`userId`,`orgId`,`entityId`),
+  KEY `senders_orgid_index` (`orgId`),
+  KEY `senders_entityid_index` (`entityId`)
+) ENGINE=InnoDB AUTO_INCREMENT=6817005 DEFAULT CHARSET=utf8mb4;

@@ -1,0 +1,11 @@
+CREATE TABLE `users_data` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `type` varchar(32) NOT NULL,
+  `data` text,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `userId` int(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `users_data_type_index` (`type`),
+  KEY `users_data_userid_index` (`userId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

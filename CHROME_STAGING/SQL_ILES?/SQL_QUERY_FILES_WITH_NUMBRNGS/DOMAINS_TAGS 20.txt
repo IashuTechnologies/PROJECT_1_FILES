@@ -1,0 +1,11 @@
+CREATE TABLE `domains_tags` (
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `domainId` int(11) unsigned DEFAULT NULL,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `tagId` int(11) unsigned DEFAULT NULL,
+  `color` varchar(16) DEFAULT NULL,
+  KEY `domains_tags_entityid_index` (`entityId`),
+  KEY `domains_tags_domainid_index` (`domainId`),
+  KEY `domains_tags_orgid_index` (`orgId`),
+  KEY `domains_tags_tagid_index` (`tagId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

@@ -1,0 +1,18 @@
+CREATE TABLE `demo_evt_snd` (
+  `activeTime` int(11) unsigned DEFAULT NULL,
+  `inactiveTime` int(11) unsigned DEFAULT NULL,
+  `timestamp` int(11) unsigned NOT NULL,
+  `senderId` int(11) unsigned DEFAULT NULL,
+  `orgId` int(11) DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `domainId` int(11) unsigned DEFAULT NULL,
+  `dt` date DEFAULT NULL COMMENT 'redundunt? is timestamp sufficient?',
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`),
+  KEY `evt_snd_timestamp_index` (`timestamp`),
+  KEY `evt_snd_entityid_index` (`entityId`),
+  KEY `evt_snd_domainid_index` (`domainId`),
+  KEY `evt_snd_senderid_index` (`senderId`),
+  KEY `orgId` (`orgId`),
+  KEY `dt` (`dt`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

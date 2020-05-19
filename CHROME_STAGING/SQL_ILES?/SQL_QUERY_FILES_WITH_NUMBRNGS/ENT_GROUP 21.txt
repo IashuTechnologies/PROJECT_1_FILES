@@ -1,0 +1,10 @@
+CREATE TABLE `ent_group` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ent_group_entityId` (`entityId`),
+  KEY `ent_group_orgId` (`orgId`),
+  KEY `ent_group_name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=latin1;

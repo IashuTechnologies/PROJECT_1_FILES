@@ -1,0 +1,21 @@
+CREATE TABLE `demo_evt_os` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `activeTime` int(11) unsigned DEFAULT NULL,
+  `inactiveTime` int(11) unsigned DEFAULT NULL,
+  `timestamp` int(11) unsigned DEFAULT NULL,
+  `os` char(4) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `domainId` int(11) unsigned DEFAULT NULL,
+  `dt` date DEFAULT NULL COMMENT 'is it redundunt? timestamp is sufficient?',
+  `collectorId` varchar(8) CHARACTER SET utf8mb4 DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `evt_os_timestamp_index` (`timestamp`),
+  KEY `evt_os_entityid_index` (`entityId`),
+  KEY `evt_os_orgid_index` (`orgId`),
+  KEY `evt_os_domainid_index` (`domainId`),
+  KEY `evt_os_os_index` (`os`),
+  KEY `evt_os_collectorid_index` (`collectorId`),
+  KEY `dt` (`dt`)
+) ENGINE=InnoDB AUTO_INCREMENT=139722 DEFAULT CHARSET=latin1;
+
