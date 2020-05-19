@@ -1,0 +1,967 @@
+
+CREATE TABLE `_logs` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `timestamp` int(11) unsigned NOT NULL,
+  `userId` varchar(32) NOT NULL,
+  `clientVersion` varchar(32) NOT NULL,
+  `os` varchar(16) NOT NULL,
+  `orgId` varchar(16) DEFAULT NULL,
+  `entityId` varchar(16) DEFAULT NULL,
+  `macAddress` varchar(32) DEFAULT NULL,
+  `platformInfo` text,
+  `data` text,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `collectorId` varchar(8) NOT NULL,
+  `success` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `_logs_timestamp_index` (`timestamp`),
+  KEY `_logs_userid_index` (`userId`),
+  KEY `_logs_clientversion_index` (`clientVersion`),
+  KEY `_logs_os_index` (`os`),
+  KEY `_logs_orgid_index` (`orgId`),
+  KEY `_logs_entityid_index` (`entityId`),
+  KEY `_logs_macaddress_index` (`macAddress`),
+  KEY `_logs_collectorid_index` (`collectorId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `_tmp_senders` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `firstName` varchar(50) DEFAULT NULL,
+  `lastName` varchar(50) DEFAULT NULL,
+  `entity` varchar(50) DEFAULT NULL,
+  `sessionId` varchar(80) DEFAULT NULL,
+  `senderId` varchar(50) DEFAULT NULL,
+  `userId` char(50) NOT NULL COMMENT 'to be renamed user_name',
+  `orgId` int(11) unsigned DEFAULT NULL COMMENT 'redundant column to be eliminated',
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `machineId` varchar(80) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `senders_orgid_index` (`orgId`),
+  KEY `senders_entityid_index` (`entityId`)
+) ENGINE=InnoDB AUTO_INCREMENT=6817238 DEFAULT CHARSET=utf8mb4;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `a_tmp` (
+  `cache_event_id` int(11) NOT NULL AUTO_INCREMENT,
+  `sender_id` int(11) DEFAULT NULL,
+  `body` text,
+  PRIMARY KEY (`cache_event_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2728340 DEFAULT CHARSET=utf8;
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `alerts` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `userId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL COMMENT 'redundant column',
+  `optimalUsage` decimal(8,2) NOT NULL,
+  `category` enum('NONE','MODERATE','HIGH','ADMIN') DEFAULT NULL,
+  `type` enum('ABSOLUTE','PERCENTAGE') DEFAULT NULL,
+  `startDate` datetime DEFAULT NULL,
+  `endDate` datetime DEFAULT NULL,
+  `interval` varchar(255) NOT NULL,
+  `frequency` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `disabled` tinyint(1) DEFAULT '0',
+  `nextUpdate` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `alerts_name_index` (`name`(191)),
+  KEY `alerts_userid_index` (`userId`),
+  KEY `alerts_entityid_index` (`entityId`),
+  KEY `alerts_category_index` (`category`),
+  KEY `alerts_type_index` (`type`),
+  KEY `alerts_startdate_index` (`startDate`),
+  KEY `alerts_enddate_index` (`endDate`),
+  KEY `alerts_interval_index` (`interval`(191)),
+  KEY `alerts_disabled_index` (`disabled`),
+  KEY `nextUpdate` (`nextUpdate`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COMMENT='to store alerts based time or percetage of usage';
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `apps_events` (
+  `source` varchar(2048) NOT NULL,
+  `name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE `categories` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `categories_name_index` (`name`(191))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE `clients_entities` (
+  `clientId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  KEY `clients_entities_clientid_index` (`clientId`),
+  KEY `clients_entities_entityid_index` (`entityId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+
+
+CREATE TABLE `clients_permissions` (
+  `clientId` int(11) unsigned DEFAULT NULL,
+  `permissionId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  KEY `clients_permissions_clientid_index` (`clientId`),
+  KEY `clients_permissions_permissionid_index` (`permissionId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------
+CREATE TABLE `clients_senders_groups` (
+  `clientId` int(11) unsigned DEFAULT NULL,
+  `groupId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  KEY `clients_senders_groups_clientid_index` (`clientId`),
+  KEY `clients_senders_groups_groupid_index` (`groupId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+---------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `clients` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `apiKey` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `apiSecret` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `permissions` text CHARACTER SET utf8mb4,
+  `entities` text CHARACTER SET utf8mb4,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `userId` int(11) unsigned DEFAULT NULL,
+  `disabled` tinyint(1) DEFAULT '0',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  `createdAt` datetime DEFAULT NULL,
+  `updatedAt` datetime DEFAULT NULL,
+  `deletedAt` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `clients_apikey_index` (`apiKey`(191)),
+  KEY `clients_apisecret_index` (`apiSecret`(191)),
+  KEY `clients_orgid_index` (`orgId`),
+  KEY `clients_userid_index` (`userId`),
+  KEY `clients_disabled_index` (`disabled`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+
+
+CREATE TABLE `custom_reports` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `query` text NOT NULL,
+  `emailsList` text,
+  `interval` int(11) unsigned DEFAULT NULL,
+  `intervalUnit` enum('hour','day','month','year') DEFAULT 'day',
+  `frequency` int(11) unsigned DEFAULT NULL,
+  `frequencyUnit` enum('hour','day','month','year') DEFAULT 'day',
+  `emailInterval` int(11) unsigned DEFAULT NULL,
+  `userId` int(11) unsigned DEFAULT NULL,
+  `nextUpdate` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `custom_reports_userid_name_unique` (`userId`,`name`),
+  KEY `custom_reports_interval_index` (`interval`),
+  KEY `custom_reports_intervalunit_index` (`intervalUnit`),
+  KEY `custom_reports_frequency_index` (`frequency`),
+  KEY `custom_reports_frequencyunit_index` (`frequencyUnit`),
+  KEY `custom_reports_emailinterval_index` (`emailInterval`),
+  KEY `custom_reports_userid_index` (`userId`),
+  KEY `custom_reports_nextupdate_index` (`nextUpdate`),
+  CONSTRAINT `custom_reports_userid_foreign` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `devices` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` char(32) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `machineId` char(32) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `devices_name_machineid_orgid_unique` (`name`,`machineId`,`orgId`),
+  KEY `devices_name_index` (`name`),
+  KEY `devices_machineid_index` (`machineId`),
+  KEY `devices_orgid_index` (`orgId`)
+) ENGINE=InnoDB AUTO_INCREMENT=9978 DEFAULT CHARSET=latin1;
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `domains` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `alias` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` enum('website','app') CHARACTER SET utf8mb4 DEFAULT 'website',
+  `icon` text CHARACTER SET utf8mb4,
+  `paid` tinyint(1) DEFAULT NULL,
+  `default_category` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `domains_name_index` (`name`(191)) USING BTREE,
+  KEY `domains_type_index` (`type`)
+) ENGINE=InnoDB AUTO_INCREMENT=714132 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `domains_tags` (
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `domainId` int(11) unsigned DEFAULT NULL,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `tagId` int(11) unsigned DEFAULT NULL,
+  `color` varchar(16) DEFAULT NULL,
+  KEY `domains_tags_entityid_index` (`entityId`),
+  KEY `domains_tags_domainid_index` (`domainId`),
+  KEY `domains_tags_orgid_index` (`orgId`),
+  KEY `domains_tags_tagid_index` (`tagId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `ent_group` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ent_group_entityId` (`entityId`),
+  KEY `ent_group_orgId` (`orgId`),
+  KEY `ent_group_name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=latin1;
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `ent_group_domains` (
+  `orgId` int(11) DEFAULT NULL,
+  `entityId` int(11) DEFAULT NULL,
+  `domainId` int(11) DEFAULT NULL,
+  `groupId` int(11) DEFAULT NULL,
+  KEY `ent_group_domains_orgId` (`orgId`),
+  KEY `ent_group_domains_entityId` (`entityId`),
+  KEY `ent_group_domains_domainId` (`domainId`),
+  KEY `ent_group_domains_groupId` (`groupId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `entities` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `displayName` char(255) DEFAULT NULL,
+  `address` text,
+  `phone` text,
+  `fax` text,
+  `website` text,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `parentId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `zipCode` varchar(5) DEFAULT NULL,
+  `stateCode` varchar(5) DEFAULT NULL,
+  `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `entities_name_index` (`name`(191)),
+  KEY `entities_orgid_index` (`orgId`),
+  KEY `entities_parentid_index` (`parentId`),
+  KEY `entities_zipcode_index` (`zipCode`),
+  KEY `entities_statecode_index` (`stateCode`)
+) ENGINE=InnoDB AUTO_INCREMENT=179 DEFAULT CHARSET=utf8mb4;
+
+
+--------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `entities_domains` (
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `domainId` int(11) unsigned NOT NULL,
+  `defaultCategory` varchar(255) DEFAULT NULL,
+  `expiryDate` datetime DEFAULT NULL,
+  `isFavorite` tinyint(1) DEFAULT '0',
+  `label` varchar(255) DEFAULT NULL,
+  `description` text,
+  `category` enum('NONE','MODERATE','HIGH','ADMIN') DEFAULT NULL,
+  `numLicenses` int(11) DEFAULT NULL,
+  `annualCost` decimal(8,2) DEFAULT NULL,
+  `optimalUsage` decimal(8,2) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `categoryId` int(11) unsigned DEFAULT NULL,
+  `alias` varchar(255) DEFAULT NULL,
+  UNIQUE KEY `entities_domains_orgid_entityid_domainid_unique` (`orgId`,`entityId`,`domainId`),
+  KEY `entities_domains_orgid_index` (`orgId`),
+  KEY `entities_domains_entityid_index` (`entityId`),
+  KEY `entities_domains_domainid_index` (`domainId`),
+  KEY `entities_domains_isfavorite_index` (`isFavorite`),
+  KEY `entities_domains_label_index` (`label`(191)),
+  KEY `entities_domains_category_index` (`category`),
+  KEY `entities_domains_categoryid_index` (`categoryId`),
+  KEY `idx_numlicenses` (`numLicenses`),
+  KEY `idx_optimalusage` (`optimalUsage`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `entities_tree` (
+  `entityId` int(11) DEFAULT NULL,
+  `childId` int(11) DEFAULT NULL,
+  `orgId` int(11) DEFAULT NULL,
+  KEY `comp_idx` (`orgId`,`entityId`,`childId`),
+  KEY `orgId` (`orgId`),
+  KEY `entityId` (`entityId`),
+  KEY `childId` (`childId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `events` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `source` varchar(2048) NOT NULL,
+  `activeTime` int(11) unsigned NOT NULL,
+  `inactiveTime` int(11) unsigned NOT NULL,
+  `_date` date DEFAULT NULL,
+  `timestamp` int(11) unsigned NOT NULL,
+  `type` enum('website','app') DEFAULT 'website',
+  `lifetime` text,
+  `clientVersion` varchar(255) DEFAULT NULL,
+  `os` char(8) DEFAULT NULL COMMENT 'change to CHAR(4)',
+  `platformInfo` text,
+  `senderId` int(11) unsigned NOT NULL,
+  `orgId` int(11) unsigned NOT NULL,
+  `entityId` int(11) unsigned NOT NULL,
+  `domainId` int(11) unsigned NOT NULL,
+  `deviceId` int(11) unsigned DEFAULT NULL,
+  `sync_batch_id` int(11) NOT NULL DEFAULT '0',
+  `src_hash` binary(20) DEFAULT NULL,
+  `collectorId` char(32) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `events_source_index` (`source`(191)),
+  KEY `events_type_index` (`type`),
+  KEY `events_os_index` (`os`),
+  KEY `events_senderid_index` (`senderId`),
+  KEY `events_orgid_index` (`orgId`),
+  KEY `events_entityid_index` (`entityId`),
+  KEY `events_domainid_index` (`domainId`),
+  KEY `events_deviceid_index` (`deviceId`),
+  KEY `index_name` (`timestamp`),
+  KEY `sync_batch_id` (`sync_batch_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=142218791 DEFAULT CHARSET=utf8mb4 COMMENT='Add id column';
+
+
+---------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `evt_all` (
+  `activeTime` int(11) unsigned NOT NULL,
+  `inactiveTime` int(11) unsigned NOT NULL,
+  `timestamp` int(11) unsigned NOT NULL,
+  `type` enum('website','app') COLLATE utf8mb4_unicode_ci DEFAULT 'website',
+  `os` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `senderId` int(11) unsigned DEFAULT NULL,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `domainId` int(11) unsigned DEFAULT NULL,
+  `deviceId` int(11) unsigned DEFAULT NULL,
+  `device_machieId` varchar(48) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `device_name` varchar(48) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sender_machieId` varchar(48) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sender_userId` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `domain_icon` text COLLATE utf8mb4_unicode_ci,
+  `domain_name` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dt` date DEFAULT NULL,
+  KEY `evt_all_timestamp_index` (`timestamp`),
+  KEY `evt_all_type_index` (`type`),
+  KEY `evt_all_os_index` (`os`),
+  KEY `evt_all_senderid_index` (`senderId`),
+  KEY `evt_all_orgid_index` (`orgId`),
+  KEY `evt_all_entityid_index` (`entityId`),
+  KEY `evt_all_domainid_index` (`domainId`),
+  KEY `evt_all_deviceid_index` (`deviceId`),
+  KEY `evt_all_device_machieid_index` (`device_machieId`),
+  KEY `evt_all_device_name_index` (`device_name`),
+  KEY `evt_all_sender_machieid_index` (`sender_machieId`),
+  KEY `evt_all_sender_userid_index` (`sender_userId`),
+  KEY `evt_all_domain_name_index` (`domain_name`),
+  KEY `evt_all_dt_index` (`dt`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE `evt_all_old` (
+  `activeTime` int(11) unsigned NOT NULL,
+  `inactiveTime` int(11) unsigned NOT NULL,
+  `timestamp` int(11) unsigned NOT NULL,
+  `type` enum('website','app') COLLATE utf8mb4_unicode_ci DEFAULT 'website',
+  `os` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `senderId` int(11) unsigned DEFAULT NULL,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `domainId` int(11) unsigned DEFAULT NULL,
+  `deviceId` int(11) unsigned DEFAULT NULL,
+  `device_machieId` varchar(48) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `device_name` varchar(48) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sender_machieId` varchar(48) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sender_userId` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `domain_icon` text COLLATE utf8mb4_unicode_ci,
+  `domain_name` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dt` date DEFAULT NULL,
+  KEY `evt_all_timestamp_index` (`timestamp`),
+  KEY `evt_all_type_index` (`type`),
+  KEY `evt_all_os_index` (`os`),
+  KEY `evt_all_senderid_index` (`senderId`),
+  KEY `evt_all_orgid_index` (`orgId`),
+  KEY `evt_all_entityid_index` (`entityId`),
+  KEY `evt_all_domainid_index` (`domainId`),
+  KEY `evt_all_deviceid_index` (`deviceId`),
+  KEY `evt_all_device_machieid_index` (`device_machieId`),
+  KEY `evt_all_device_name_index` (`device_name`),
+  KEY `evt_all_sender_machieid_index` (`sender_machieId`),
+  KEY `evt_all_sender_userid_index` (`sender_userId`),
+  KEY `evt_all_domain_name_index` (`domain_name`),
+  KEY `evt_all_dt_index` (`dt`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `evt_dates` (
+  `dt` date NOT NULL,
+  `_ent` timestamp NULL DEFAULT NULL,
+  `_snd` timestamp NULL DEFAULT NULL,
+  `_os` timestamp NULL DEFAULT NULL,
+  `_all` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`dt`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `evt_devices` (
+  `activeTime` int(11) unsigned NOT NULL,
+  `inactiveTime` int(11) unsigned NOT NULL,
+  `timestamp` int(11) unsigned NOT NULL,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `deviceId` int(11) unsigned DEFAULT NULL,
+  `dt` date DEFAULT NULL,
+  KEY `evt_devices_timestamp_index` (`timestamp`),
+  KEY `evt_devices_orgid_index` (`orgId`),
+  KEY `evt_devices_entityid_index` (`entityId`),
+  KEY `evt_devices_deviceid_index` (`deviceId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `evt_ent` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `activeTime` int(11) unsigned DEFAULT NULL,
+  `inactiveTime` int(11) unsigned DEFAULT NULL,
+  `timestamp` int(11) DEFAULT NULL,
+  `orgId` int(11) DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `domainId` int(11) unsigned DEFAULT NULL,
+  `dt` date DEFAULT NULL,
+  `type` varchar(30) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `evt_ent_entityid_index` (`entityId`),
+  KEY `evt_ent_domainid_index` (`domainId`),
+  KEY `dt` (`dt`),
+  KEY `timestamp` (`timestamp`),
+  KEY `orgId` (`orgId`)
+) ENGINE=InnoDB AUTO_INCREMENT=171832619 DEFAULT CHARSET=latin1;
+
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `evt_fav` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `activeTime` int(11) unsigned NOT NULL DEFAULT '0',
+  `inactiveTime` int(11) unsigned NOT NULL DEFAULT '0',
+  `timestamp` int(11) unsigned DEFAULT NULL,
+  `senderId` int(11) unsigned DEFAULT NULL,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `domainId` int(11) unsigned DEFAULT NULL,
+  `favoriteId` int(11) unsigned DEFAULT NULL,
+  `dt` date DEFAULT NULL,
+  `type` enum('website','app') DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `senderId` (`senderId`,`favoriteId`,`dt`),
+  KEY `evt_fav_timestamp_index` (`timestamp`),
+  KEY `evt_fav_senderid_index` (`senderId`),
+  KEY `evt_fav_orgid_index` (`orgId`),
+  KEY `evt_fav_entityid_index` (`entityId`),
+  KEY `evt_fav_domainid_index` (`domainId`),
+  KEY `evt_fav_favoriteid_index` (`favoriteId`),
+  KEY `dt` (`dt`)
+) ENGINE=InnoDB AUTO_INCREMENT=176532289 DEFAULT CHARSET=utf8mb4;
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `evt_os` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `activeTime` int(11) unsigned DEFAULT NULL,
+  `inactiveTime` int(11) unsigned DEFAULT NULL,
+  `_timestamp_old` int(11) NOT NULL,
+  `os` char(8) DEFAULT NULL,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `domainId` int(11) unsigned DEFAULT NULL,
+  `dt` date DEFAULT NULL COMMENT 'is it redundunt? timestamp is sufficient?',
+  `collectorId` varchar(8) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `timestamp` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `evt_os_timestamp_index` (`_timestamp_old`),
+  KEY `evt_os_entityid_index` (`entityId`),
+  KEY `evt_os_orgid_index` (`orgId`),
+  KEY `evt_os_domainid_index` (`domainId`),
+  KEY `evt_os_os_index` (`os`),
+  KEY `evt_os_collectorid_index` (`collectorId`),
+  KEY `dt` (`dt`)
+) ENGINE=InnoDB AUTO_INCREMENT=178714046 DEFAULT CHARSET=latin1;
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `evt_snd` (
+  `activeTime` int(11) unsigned DEFAULT NULL,
+  `inactiveTime` int(11) unsigned DEFAULT NULL,
+  `_timestamp_old` int(11) NOT NULL,
+  `senderId` int(11) unsigned DEFAULT NULL,
+  `orgId` int(11) DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `domainId` int(11) unsigned DEFAULT NULL,
+  `dt` date DEFAULT NULL COMMENT 'redundunt? is timestamp sufficient?',
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `timestamp` int(11) unsigned NOT NULL DEFAULT '0',
+  `type` char(30) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `evt_snd_timestamp_index` (`_timestamp_old`),
+  KEY `evt_snd_entityid_index` (`entityId`),
+  KEY `evt_snd_domainid_index` (`domainId`),
+  KEY `evt_snd_senderid_index` (`senderId`),
+  KEY `orgId` (`orgId`),
+  KEY `dt` (`dt`)
+) ENGINE=InnoDB AUTO_INCREMENT=750865951 DEFAULT CHARSET=latin1;
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE `exceptions` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `collector` varchar(255) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1234656469 DEFAULT CHARSET=latin1;
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `favorites` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `url` varchar(80) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `label` varchar(32) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `description` text CHARACTER SET utf8mb4,
+  `expiryDate` datetime DEFAULT NULL,
+  `category` enum('NONE','MODERATE','HIGH','ADMIN') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numLicenses` int(11) DEFAULT NULL,
+  `defaultCategory` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `optimalUsage` decimal(8,2) DEFAULT NULL,
+  `annualCost` decimal(8,2) DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `domainId` int(11) unsigned DEFAULT NULL,
+  `in_sync` tinyint(1) DEFAULT '0',
+  `evt_fav_updated` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `is_enabled` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `entityId` (`entityId`,`domainId`),
+  KEY `favorites_url_index` (`url`),
+  KEY `favorites_category_index` (`category`),
+  KEY `favorites_entityid_index` (`entityId`),
+  KEY `favorites_orgid_index` (`orgId`),
+  KEY `favorites_domainid_index` (`domainId`),
+  KEY `favorites_label_index` (`label`),
+  KEY `favorites_in_sync_index` (`in_sync`)
+) ENGINE=InnoDB AUTO_INCREMENT=356 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `groups` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  `type` enum('user','sender') DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `groups_orgid_index` (`orgId`),
+  KEY `groups_type_index` (`type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `knex_migrations` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `batch` int(11) DEFAULT NULL,
+  `migration_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4;
+
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `knex_migrations_lock` (
+  `is_locked` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `long_domains_ids` (
+  `id` int(11) unsigned NOT NULL DEFAULT '0',
+  `name` varchar(255) CHARACTER SET utf8mb4 NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+CREATE TABLE `md_senders` (
+  `senderId` int(11) unsigned NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `notifications` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sent` tinyint(1) NOT NULL DEFAULT '0',
+  `type` varchar(255) NOT NULL,
+  `subject` text NOT NULL,
+  `to` varchar(255) NOT NULL,
+  `template` text NOT NULL,
+  `templateVars` text NOT NULL,
+  `timestamp` int(11) unsigned NOT NULL,
+  `level` int(8) DEFAULT '-1',
+  PRIMARY KEY (`id`),
+  KEY `notifications_type_index` (`type`(191)),
+  KEY `notifications_timestamp_index` (`timestamp`),
+  KEY `notifications_level_index` (`level`),
+  KEY `tio` (`to`(191))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `organizations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `orgs` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `orgId` varchar(32) NOT NULL COMMENT 'can we use Orgs.id instead? this would make it easier for users to remember their ID and simplify queries',
+  `address` varchar(512) DEFAULT NULL,
+  `phone` varchar(32) DEFAULT NULL,
+  `fax` varchar(32) DEFAULT NULL,
+  `website` text,
+  `live` varchar(2048) DEFAULT NULL,
+  `ownerId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  `logo` text,
+  `zipCode` varchar(5) DEFAULT NULL,
+  `stateCode` varchar(5) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `orgs_name_index` (`name`(191)) USING BTREE,
+  KEY `orgs_orgid_index` (`orgId`),
+  KEY `orgs_live_index` (`live`(191)),
+  KEY `orgs_ownerid_index` (`ownerId`),
+  KEY `orgs_zipcode_index` (`zipCode`),
+  KEY `orgs_statecode_index` (`stateCode`)
+) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8mb4;
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `orphan_events` (
+  `timestamp` int(11) unsigned NOT NULL,
+  `activeTime` int(11) unsigned NOT NULL,
+  `inactiveTime` int(11) unsigned NOT NULL,
+  `source` varchar(2048) NOT NULL,
+  `src_hash` varbinary(20) DEFAULT NULL,
+  `type` enum('website','app') DEFAULT 'website',
+  `os` varchar(32) NOT NULL,
+  `collectorId` varchar(32) NOT NULL,
+  `platformInfo` text,
+  `lifetime` text,
+  `clientVersion` varchar(32) NOT NULL,
+  `orgId` varchar(32) NOT NULL,
+  `entityId` varchar(32) NOT NULL,
+  `senderId` varchar(80) NOT NULL,
+  `domainId` varchar(112) NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  KEY `orphan_events_timestamp_index` (`timestamp`),
+  KEY `orphan_events_source_index` (`source`(191)),
+  KEY `orphan_events_type_index` (`type`),
+  KEY `orphan_events_os_index` (`os`),
+  KEY `orphan_events_collectorid_index` (`collectorId`),
+  KEY `orphan_events_clientversion_index` (`clientVersion`),
+  KEY `orphan_events_orgid_index` (`orgId`),
+  KEY `orphan_events_entityid_index` (`entityId`),
+  KEY `orphan_events_senderid_index` (`senderId`),
+  KEY `orphan_events_domainid_index` (`domainId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `permissions` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `action` enum('ADD','REVOKE') DEFAULT 'ADD',
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `userId` int(11) unsigned DEFAULT NULL,
+  `roleId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `createdAt` datetime DEFAULT NULL COMMENT 'redundant column to be eliminated',
+  `updatedAt` datetime DEFAULT NULL COMMENT 'redundant column to be eliminated',
+  PRIMARY KEY (`id`),
+  KEY `permissions_name_index` (`name`(191)),
+  KEY `permissions_action_index` (`action`),
+  KEY `permissions_orgid_index` (`orgId`),
+  KEY `permissions_userid_index` (`userId`),
+  KEY `permissions_roleid_index` (`roleId`),
+  KEY `permissions_entityid_index` (`entityId`)
+) ENGINE=InnoDB AUTO_INCREMENT=2481 DEFAULT CHARSET=utf8mb4;
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `roles` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `parentId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `createdAt` datetime DEFAULT NULL COMMENT 'redundant column to be eliminate',
+  `updatedAt` datetime DEFAULT NULL COMMENT 'redundant column to be eliminate',
+  PRIMARY KEY (`id`),
+  KEY `roles_name_index` (`name`(191)),
+  KEY `roles_orgid_index` (`orgId`),
+  KEY `roles_parentid_index` (`parentId`)
+) ENGINE=InnoDB AUTO_INCREMENT=212 DEFAULT CHARSET=utf8mb4;
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `roles_permissions` (
+  `roleId` int(11) unsigned DEFAULT NULL,
+  `permissionId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  KEY `roles_permissions_roleid_index` (`roleId`),
+  KEY `roles_permissions_permissionid_index` (`permissionId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `senders` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `firstName` varchar(50) DEFAULT NULL,
+  `lastName` varchar(50) DEFAULT NULL,
+  `userId` char(50) NOT NULL COMMENT 'to be renamed user_name',
+  `orgId` int(11) unsigned DEFAULT NULL COMMENT 'redundant column to be eliminated',
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `machineId` varchar(80) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `userId_2` (`userId`),
+  UNIQUE KEY `userId` (`userId`,`orgId`,`entityId`),
+  KEY `senders_orgid_index` (`orgId`),
+  KEY `senders_entityid_index` (`entityId`)
+) ENGINE=InnoDB AUTO_INCREMENT=6817005 DEFAULT CHARSET=utf8mb4;
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+CREATE TABLE `senders_groups` (
+  `groupId` int(11) unsigned DEFAULT NULL,
+  `senderId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  KEY `senders_groups_groupid_index` (`groupId`),
+  KEY `senders_groups_senderid_index` (`senderId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `settings` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `type` varchar(255) NOT NULL DEFAULT 'string',
+  `value` text,
+  `userId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `createdAt` datetime DEFAULT NULL,
+  `updatedAt` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `settings_name_index` (`name`(191)),
+  KEY `settings_userid_index` (`userId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `tags` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  `color` varchar(16) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `tags_entityid_index` (`entityId`),
+  KEY `tags_orgid_index` (`orgId`),
+  KEY `tags_name_index` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `tracks` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `orgId` int(11) NOT NULL,
+  `entityId` int(11) NOT NULL,
+  `processed` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `userId` (`userId`(191))
+) ENGINE=InnoDB AUTO_INCREMENT=5539 DEFAULT CHARSET=utf8;
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE `users` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `orgId` int(11) unsigned DEFAULT NULL COMMENT 'redundunt column',
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `roleId` int(11) unsigned DEFAULT NULL COMMENT 'to be merged to users_to_roles table',
+  `firstName` varchar(255) DEFAULT NULL,
+  `lastName` varchar(255) DEFAULT NULL,
+  `avatar` text,
+  `password` text NOT NULL,
+  `activated` tinyint(1) DEFAULT '1',
+  `disabled` tinyint(1) DEFAULT '0',
+  `setupComplete` tinyint(1) DEFAULT '1',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  `meta` varchar(512) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `users_username_index` (`username`(191)),
+  KEY `users_email_index` (`email`(191)),
+  KEY `users_orgid_index` (`orgId`),
+  KEY `users_entityid_index` (`entityId`),
+  KEY `users_roleid_index` (`roleId`),
+  KEY `users_activated_index` (`activated`),
+  KEY `users_disabled_index` (`disabled`),
+  KEY `users_setupcomplete_index` (`setupComplete`)
+) ENGINE=InnoDB AUTO_INCREMENT=154 DEFAULT CHARSET=utf8mb4;
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE `users_data` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `type` varchar(32) NOT NULL,
+  `data` text,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `userId` int(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `users_data_type_index` (`type`),
+  KEY `users_data_userid_index` (`userId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `users_groups` (
+  `groupId` int(11) unsigned DEFAULT NULL,
+  `userId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  KEY `users_groups_groupid_index` (`groupId`),
+  KEY `users_groups_userid_index` (`userId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE `users_senders_groups` (
+  `userId` int(11) unsigned DEFAULT NULL,
+  `groupId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  KEY `users_senders_groups_userid_index` (`userId`),
+  KEY `users_senders_groups_groupid_index` (`groupId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------

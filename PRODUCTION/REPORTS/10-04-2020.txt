@@ -1,0 +1,8 @@
+Date:10.04.2020
+----FINISHED----
+SCHEMA_PART_IN_REDSHIFT :
+DATABASE_NAME : production
+SCHEMA_NAME : chrome_production
+Tables : 48 
+----TO_DO-----
+EXPORT_CSV_PART

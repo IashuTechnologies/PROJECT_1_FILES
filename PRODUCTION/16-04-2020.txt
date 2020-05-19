@@ -1,0 +1,60 @@
+REFERRED LINK : https://docs.aws.amazon.com/redshift/latest/dg/stored-procedure-create.html
+----------------------------------------------------------------------------------------------------------------
+CREATE OR REPLACE PROCEDURE test()
+AS $$
+BEGIN
+  SELECT 1 a;
+END;
+$$
+LANGUAGE plpgsql
+;
+/
+
+GETTING ERROR : MULTIPLE SQL ARE NOT ALLOWED.
+---------------------------------------------------------------------------------------------
+arguments are input (IN) arguments :
+
+CREATE OR REPLACE PROCEDURE test_sp1(f1 int, f2 varchar)
+AS $$
+BEGIN
+  RAISE INFO 'f1 = %, f2 = %', f1, f2;
+END;
+$$ LANGUAGE plpgsql;
+
+call test_sp1(5, 'abc');
+INFO: f1 = 5, f2 = abc
+CALL   
+
+----------------------------------------------------------------------------------------------
+ Arguments are input (IN), input and output (INOUT), and output (OUT).
+
+CREATE OR REPLACE PROCEDURE test_sp2(f1 IN int, f2 INOUT varchar(256), out_var OUT varchar(256))
+AS $$
+DECLARE
+  loop_var int;
+BEGIN
+  IF f1 is null OR f2 is null THEN
+    RAISE EXCEPTION 'input cannot be null';
+  END IF;
+  DROP TABLE if exists my_etl;
+  CREATE TEMP TABLE my_etl(a int, b varchar);
+    FOR loop_var IN 1..f1 LOOP
+        insert into my_etl values (loop_var, f2);
+        f2 := f2 || '+' || f2;
+    END LOOP;
+  SELECT INTO out_var count(*) from my_etl;
+END;
+$$ LANGUAGE plpgsql;
+
+call test_sp2(2,'2019');
+
+
+=============================================================
+OUTPUT: 
+
+         f2          | column2
+---------------------+---------
+ 2019+2019+2019+2019 | 2
+(1 row)
+
+--------------------------------------------------------------------------------------------------

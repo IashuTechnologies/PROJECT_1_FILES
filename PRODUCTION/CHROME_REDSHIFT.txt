@@ -1,0 +1,809 @@
+CREATE TABLE  chrome_production._logs  (
+   id  integer not NULL IDENTITY(1,1),
+   timestamp  integer NOT NULL,
+   userId  varchar(32) NOT NULL,
+   clientVersion  varchar(32) NOT NULL,
+   os  varchar(16) NOT NULL,
+   orgId  varchar(16) DEFAULT NULL,
+   entityId  varchar(16) DEFAULT NULL,
+   macAddress  varchar(32) DEFAULT NULL,
+   platformInfo  varchar(256),
+   data  varchar(256),
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+   collectorId  varchar(8) NOT NULL,
+   success  INT2 DEFAULT 0',
+   data_hash varchar(16) DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (timestamp,userId, clientVersion,os,orgId,entityId,macAddress,collectorId);
+  
+-------------------------------------------------------------------------------------------------------
+NOTE; extra interleaved key datahash,userid
+NOTE : COPY didn’t do because only column name is there no values in csv file
+
+
+NOTE 2 : Removed unsigned NOT NULL AUTO_INCREMENT Because Redshift does not support unsigned Values
+
+===========================================================================================================================================================
+
+CREATE TABLE chrome_production._tmp_events (
+  src_hash varchar(256) DEFAULT NULL,
+  source varchar(2048) NOT NULL,
+  domainName varchar(2048) NOT NULL,
+  activeTime integer NOT NULL,
+  inactiveTime integer NOT NULL,
+  timestamp integer NOT NULL,
+  type varchar(256) DEFAULT 'website',
+  lifetime varchar(256),
+  clientVersion varchar(255) DEFAULT NULL,
+  os varchar(128) NOT NULL,
+  platformInfo varchar(256),
+  icon varchar(256),
+  senderId integer DEFAULT NULL,
+  orgId integer DEFAULT NULL,
+  entityId integer DEFAULT NULL,
+  domainId integer DEFAULT NULL,
+  sessionId varchar(32) DEFAULT NULL,
+  created_at timestamp DEFAULT NULL,
+  updated_at timestamp DEFAULT NULL,
+  collectorId varchar(8) NOT NULL,
+  deviceId char(48) DEFAULT NULL)
+  interleaved sortkey (collectorId,sessionId,domainId);
+  
+-----------------------------------------------------------------------------------------------------
+NOTE : removed character set and collate
+
+====================================================================================================================================
+
+
+CREATE TABLE chrome_production.a_tmp (
+   cache_event_id integer NOT NULL IDENTITY(1,1),
+   sender_id integer DEFAULT NULL,
+   body varchar(256),
+  PRIMARY KEY (cache_event_id)
+  );
+
+=====================================================================================================================================================================================
+
+CREATE TABLE  chrome_production.alerts  (
+   id  integer NOT NULL IDENTITY(1,1),
+   name  varchar(255) NOT NULL,
+   userId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL,
+   optimalUsage  decimal(8,2) NOT NULL,
+   category  varchar(256) DEFAULT NULL,
+   type  varchar(256) DEFAULT NULL,
+   startDate  timestamp DEFAULT NULL,
+   endDate  timestamp DEFAULT NULL,
+   integererval  varchar(255) NOT NULL,
+   frequency  integer DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+   disabled  INT2 DEFAULT '0',
+   nextUpdate  integer NOT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (name,userId,entityId,category,type,startDate,endDate,integererval);
+  
+-------------------------------------------------------------------------------------------------
+NOTE 1: need to add indexes 8 added 2 more ,comment,enum
+NOTE 2: Removed unsigned Values and UTF8unsigned NOT NULL AUTO_INCREMENT And DEFAULT CHARSET=utf8mb4; Because Redshift does not support unsigned Values and UTF8.
+NOTE 3: Removed COMMENT 'redundant column from entityId
+=============================================================================================================================================================================
+
+CREATE TABLE chrome_production.apps_events (
+   source varchar(2048) NOT NULL,
+   name varchar(255) NOT NULL
+);
+
+=============================================================================================================================================
+CREATE TABLE  chrome_production.categories  (
+   id  integer NOT NULL Identity(1,1),
+   name  varchar(255) NOT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  sortkey (name);  
+  
+=============================================================================================================================================
+
+CREATE TABLE chrome_production.clients (
+  id integer NOT NULL Identity(1,1),
+  name varchar(255) DEFAULT NULL,
+  apiKey varchar(255) DEFAULT NULL,
+  apiSecret varchar(255) DEFAULT NULL,
+  permissions_redshift varchar(256) ,
+  entities varchar(256) ,
+  orgId integer DEFAULT NULL,
+  userId integer DEFAULT NULL,
+  disabled int2 DEFAULT 0,
+  created_at  timestamp DEFAULT NULL,
+  updated_at  timestamp DEFAULT NULL,
+  deleted_at  timestamp DEFAULT NULL,
+  createdAt  timestamp DEFAULT NULL,
+  updatedAt  timestamp DEFAULT NULL,
+  deletedAt  timestamp DEFAULT NULL,
+  PRIMARY KEY (id))
+interleaved sortkey (apiKey,apiSecret,orgId,userId,disabled);
+
+---------------------------------------------------------------------------------------------------------
+Note: character set removed and foreign key 
+===============================================================================================================================================
+
+  CREATE TABLE  chrome_production.clients_entities  (
+   clientId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL)
+   interleaved sortkey (clientId,entityId); 
+   
+---------------------------------------------------------------------------------------------------------
+Note: removed foreign key 
+   
+===============================================================================================================================================
+
+ CREATE TABLE  chrome_production.clients_permissions  (
+   clientId  integer DEFAULT NULL,
+   permissionId  integer DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL)
+   interleaved sortkey (clientId,permissionId);
+---------------------------------------------------------------------------------------------------------
+Note: removed foreign key 
+   
+=================================================================================================================================================
+
+CREATE TABLE  chrome_production.clients_senders_groups  (
+   clientId  integer DEFAULT NULL,
+   groupId  integer DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL)
+ interleaved sortkey (clientId,groupId); 
+---------------------------------------------------------------------------------------------------------
+Note: removed foreign key 
+==========================================================================================================================================================
+
+CREATE TABLE  chrome_production.devices  (
+   id  integer NOT NULL Identity(1,1),
+   name  char(32) DEFAULT NULL,
+   machineId  char(32) DEFAULT NULL,
+   orgId  integer DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (name,machineId,orgId); 
+
+---------------------------------------------------------------------------------------------------------------------
+note:unique key,unsigned,character set removed
+==============================================================================================================================================================
+
+CREATE TABLE chrome_production.domains  (
+   id  integer NOT NULL Identity(1,1),
+   name  varchar(255) NOT NULL,
+   alias  varchar(255)  DEFAULT NULL,
+   type  varchar(255) DEFAULT 'website',
+   icon  varchar(65535),
+   paid  INT2 DEFAULT NULL,
+   default_category  varchar(255) DEFAULT NULL,
+   created_at  timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY ( id ))
+  sortkey (type);
+---------------------------------------------------------------------------------------------------------------
+note: removed unsigned,collate,enum,uniquekey
+
+===============================================================================================================================================
+
+CREATE TABLE  chrome_production.domains_tags  (
+   entityId  integer DEFAULT NULL,
+   domainId  integer DEFAULT NULL,
+   orgId  integer DEFAULT NULL,
+   tagId  integer DEFAULT NULL,
+   color  varchar(16) DEFAULT NULL)
+    interleaved sortkey (entityId,domainId,orgId,tagId); 
+	
+------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE  chrome_production.ent_group  (
+   id  integer  NOT NULL IDENTITY(1,1),
+   orgId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL,
+   name  varchar(255) NOT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (entityId, orgId,name);
+
+---------------------------------------------------------------------------------------------------
+NOTE : Removed unsigned Values Because Redshift does not support unsigned Values
+================================================================================================================================================
+
+CREATE TABLE  chrome_production.ent_group_domains  (
+   orgId  integer  DEFAULT NULL,
+   entityId  integer  DEFAULT NULL,
+   domainId  integer  DEFAULT NULL,
+   groupId  integer  DEFAULT NULL);
+  
+==============================================================================================================================================
+
+CREATE TABLE  chrome_production.entities  (
+   id  integer NOT NULL IDENTITY(1,1),
+   name  varchar(255) NOT NULL,
+   displayName  varchar(255) DEFAULT NULL,
+   address varchar(256),
+   phone varchar(256),
+   fax varchar(256),
+   website varchar(256),
+   orgId  integer DEFAULT NULL,
+   parentId  integer DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+   zipCode  varchar(5) DEFAULT NULL,
+   stateCode  varchar(5) DEFAULT NULL,
+   created  timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (name,orgId,parentId,zipCode,stateCode);
+  
+---------------------------------------------------------------------------------------------------
+NOTE : Removed foreign key and unsigned Values Because Redshift does not support unsigned Values.
+================================================================================================================================================
+
+ CREATE TABLE  chrome_production.entities_domains  (
+   orgId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL,
+   domainId  integer NOT NULL,
+   defaultCategory  varchar(255) DEFAULT NULL,
+   expiryDate timestamp DEFAULT NULL,
+   isFavorite INT2 DEFAULT '0',
+   label  varchar(255) DEFAULT NULL,
+   description varchar(256),
+   category varchar(256) DEFAULT NULL,
+   numLicenses  integer DEFAULT NULL,
+   annualCost  decimal(8,2) DEFAULT NULL,
+   optimalUsage  decimal(8,2) DEFAULT NULL,
+   created_at  timestamp NULL DEFAULT NULL,
+   updated_at  timestamp NULL DEFAULT NULL,
+   categoryId  integer DEFAULT NULL,
+   alias  varchar(255) DEFAULT NULL)
+   interleaved sortkey (orgId,entityId,domainId,isFavorite,label,category,categoryId,numLicenses);
+ 
+--------------------------------------------------------------------------------------------------- 
+   
+Note 1: removed unique keys : UNIQUE KEY  entities_domains_orgid_entityid_domainid_unique  ( orgId , entityId , domainId ) 
+NOTE 2:  Remove last sortkey "optimalUsage"
+NOTE 3: Removed unsigned Values Because Redshift does not support unsigned Values
+NOTE 4: Removed "enum('NONE','MODERATE','HIGH','ADMIN') and puts "varchar (256)" becs redshift does not support enum
+NOTE 5: removed foreign keys 
+================================================================================================================================================
+
+  CREATE TABLE  chrome_production.entities_tree  (
+   entityId  integer DEFAULT NULL,
+   childId  integer DEFAULT NULL,
+   orgId  integer DEFAULT NULL);
+ ================================================================================================================================================
+
+
+CREATE TABLE  chrome_production.events(
+   id  integer NOT NULL IDENTITY(1,1),
+   source  varchar(2048) NOT NULL,
+   activeTime  integer NOT NULL,
+   inactiveTime  integer NOT NULL,
+   _date  date DEFAULT NULL,
+   timestamp  integer NOT NULL,
+   type  varchar(256) DEFAULT 'website',
+   lifetime  varchar(256),
+   clientVersion  varchar(255) DEFAULT NULL,
+   os  char(8) DEFAULT NULL,
+   platformInfo  varchar(256),
+   senderId  integer NOT NULL,
+   orgId  integer NOT NULL,
+   entityId  integer NOT NULL,
+   domainId  integer NOT NULL,
+   deviceId  integer DEFAULT NULL,
+   sync_batch_id  integer NOT NULL DEFAULT '0',
+   src_hash  varchar(256) DEFAULT NULL,
+   collectorId  char(32) DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (source,type,os,senderId,orgId,entityId,domainId,deviceId);
+
+---------------------------------------------------------------------------------
+Note 1: short key left -- timestamp, sync_batch_id becs redshift supports only 8 shortkeys
+NOTE 2: Removed unsigned Values Because Redshift does not support unsigned Values
+NOTE 3: Removed "enum('website','app') and puts "varchar (256)" becs redshift does not support enum
+NOTE 4: Removed = ENGINE=InnoDB AUTO_INCREMENT=142218791 DEFAULT CHARSET=utf8mb4 COMMENT='Add id column';
+NOTE 5: removed unique tables
+========================================================================================================================================================
+CREATE TABLE  chrome_production.evt_dates  (
+   dt  date NOT NULL,
+   _ent  timestamp NULL DEFAULT NULL,
+   _snd  timestamp NULL DEFAULT NULL,
+   _os  timestamp NULL DEFAULT NULL,
+  PRIMARY KEY ( dt ));
+  
+=====================================================================================================================================================
+
+
+
+CREATE TABLE  chrome_production.evt_devices  (
+   activeTime integer  NOT NULL,
+   inactiveTime  integer  NOT NULL,
+   timestamp  integer  NOT NULL,
+   orgId  integer  DEFAULT NULL,
+   entityId  integer  DEFAULT NULL,
+   deviceId  integer  DEFAULT NULL,
+   dt  date DEFAULT NULL)
+   interleaved sortkey (timestamp,orgId,entityId,deviceId);
+  
+   
+----------------------------------------------------------------------------------------
+
+NOTE 1: Removed unsigned Values Because Redshift does not support unsigned Values
+
+==============================================================================================================================================================
+
+
+
+CREATE TABLE  chrome_production.evt_ent  (
+   id  integer NOT NULL IDENTITY(1,1),
+   activeTime  integer DEFAULT NULL,
+   inactiveTime  integer DEFAULT NULL,
+   timestamp  integer DEFAULT NULL,
+   orgId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL,
+   domainId  integer DEFAULT NULL,
+   dt timestamp DEFAULT NULL,
+   type  varchar(30) DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (entityId,domainId,dt,timestamp,orgId); 
+---------------------------------------------------------------------------------------------------------------------
+note : unsigned is removed 
+======================================================================================================================================================
+  
+CREATE TABLE chrome_production.evt_fav (
+  id integer NOT NULL IDENTITY(1,1),
+  activeTime integer  NOT NULL DEFAULT '0',
+  inactiveTime integer  NOT NULL DEFAULT '0',
+  timestamp integer DEFAULT NULL,
+  senderId integer  DEFAULT NULL,
+  orgId integer DEFAULT NULL,
+  entityId integer  DEFAULT NULL,
+  domainId integer  DEFAULT NULL,
+  favoriteId integer  DEFAULT NULL,
+  dt timestamp DEFAULT NULL,
+  type varchar(255) DEFAULT NULL,
+  PRIMARY KEY (id))
+   interleaved sortkey (timestamp,senderId,orgId,domainId,favoriteId,dt); 
+----------------------------------------------------------------------------------------------------------------------------
+ 
+ note : unsigned is removed and unique key and syntax to be checked 
+
+===========================================================================================================================================================
+
+
+  CREATE TABLE chrome_production.evt_os (
+  id integer NOT NULL IDENTITY(1,1),
+  activeTime integer  DEFAULT NULL,
+  inactiveTime integer  DEFAULT NULL,
+  _timestamp_old integer NOT NULL,
+  os char(40) DEFAULT NULL,
+  orgId integer  DEFAULT NULL,
+  entityId integer  DEFAULT NULL,
+  domainId integer  DEFAULT NULL,
+  dt timestamp DEFAULT NULL ,
+  collectorId varchar(8) DEFAULT NULL,
+  timestamp integer NOT NULL,
+  PRIMARY KEY (id))
+    interleaved sortkey (_timestamp_old,entityId,orgId,domainId,os,collectorId,dt); 
+
+---------------------------------------------------------------------------------------------------------------------------------
+note : unsigned is removed and comment is removed.
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE chrome_production.evt_snd (
+  activeTime integer  DEFAULT NULL,
+  inactiveTime integer  DEFAULT NULL,
+  _timestamp_old integer NOT NULL,
+  senderId integer  DEFAULT NULL,
+  orgId integer DEFAULT NULL,
+  entityId integer  DEFAULT NULL,
+  domainId integer  DEFAULT NULL,
+  dt timestamp DEFAULT NULL,
+  id integer NOT NULL identity(1,1),
+  timestamp_redshift integer  NOT NULL DEFAULT '0',
+  type char(30) DEFAULT NULL,
+  PRIMARY KEY (id))
+  interleaved sortkey (_timestamp_old,entityId,domainId,senderId,orgId,dt); 
+	 
+-------------------------------------------------------------------------------------------------------------------------
+	 note : unsigned is remobed and comment is removed.
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+
+CREATE TABLE chrome_production.exceptions (
+  id integer NOT NULL IDENTITY(1,1),
+  name varchar(255) NOT NULL,
+  collector varchar(255) NOT NULL,
+  deleted int2 NOT NULL DEFAULT '0',
+  created_at timestamp NOT NULL,
+  updated_at timestamp NOT NULL,
+  PRIMARY KEY (id)
+);
+---------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+CREATE TABLE chrome_production.favorites (
+  id integer  NOT NULL IDENTITY(1,1),
+  url varchar(80)  DEFAULT NULL,
+  label varchar(32)  DEFAULT NULL,
+  description varchar(256) ,
+  expiryDate timestamp DEFAULT NULL,
+  category varchar(256) DEFAULT NULL,
+  defaultCategory varchar(255) DEFAULT NULL,
+  numLicenses integer DEFAULT NULL,
+  optimalUsage decimal(8,2) DEFAULT NULL,
+  annualCost decimal(8,2) DEFAULT NULL,
+  entityId integer  DEFAULT NULL,
+  orgId integer  DEFAULT NULL,
+  domainId integer  DEFAULT NULL,
+  in_sync int2 DEFAULT '0',
+  evt_fav_updated timestamp NULL DEFAULT NULL,
+  is_enabled int2 NOT NULL DEFAULT '0',
+  created_at timestamp DEFAULT NULL,
+  updated_at timestamp DEFAULT NULL,
+  PRIMARY KEY (id))
+  interleaved sortkey (url,category,entityId,orgId,domainId,label,in_sync); 
+----------------------------------------------------------------------------------------------------------------------------
+
+Note : unsigned, character, collate to be removed, unique key (syntax)
+
+Note : Removed : CONSTRAINT `favorites_domainid_foreign` FOREIGN KEY (`domainId`) REFERENCES `domains` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+       Removed : CONSTRAINT `favorites_entityid_foreign` FOREIGN KEY (`entityId`) REFERENCES `entities` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+       Removed: CONSTRAINT `favorites_orgid_foreign` FOREIGN KEY (`orgId`) REFERENCES `orgs` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE  chrome_production.groups  (
+   id  integer NOT NULL IDENTITY(1,1),
+   orgId  integer DEFAULT NULL,
+   deleted_at  timestamp DEFAULT NULL,
+   type varchar(256) DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (orgId,type);
+  
+  
+  ----------------------------------------------------------------------------------------
+NOTE 1: Removed unsigned Values Because Redshift does not support unsigned Values
+NOTE 2: Removed enum('user','sender') and puts "Varchar (256)" from type becs redshift does not support enum
+----------------------------------------------------------------------------------------------------
+
+CREATE TABLE  chrome_production.knex_migrations  (
+   id  integer NOT NULL IDENTITY(1,1),
+   name  varchar(255) DEFAULT NULL,
+   batch  integer DEFAULT NULL,
+   migration_time  timestamp NULL DEFAULT NULL,
+  PRIMARY KEY ( id ));
+  
+
+ ----------------------------------------------------------------------------------------
+
+NOTE 1: Removed unsigned Values Because Redshift does not support unsigned Values
+
+----------------------------------
+
+CREATE TABLE  chrome_production.knex_migrations_lock  (
+   is_locked  integer DEFAULT NULL);
+
+--------------------------------------------------------------
+
+
+CREATE TABLE  chrome_production.md_senders  (
+   senderId  integer  NOT NULL);
+   
+
+
+ ----------------------------------------------------------------------------------------
+NOTE 1: Removed unsigned Values Because Redshift does not support unsigned Values
+-----------------------------------------------------------------------------------------------
+
+
+CREATE TABLE chrome_production.notifications  (
+   id  integer NOT NULL identity(1,1),
+   sent  int2 NOT NULL DEFAULT '0',
+   type  varchar(255) NOT NULL,
+   subject  varchar(256) NOT NULL,
+   to_redshift  varchar(25) NOT NULL,
+   template varchar(256) NOT NULL,
+   templateVars  varchar(256) NOT NULL,
+   timestamp_redshift  integer NOT NULL,
+   level  integer DEFAULT '-1',
+  PRIMARY KEY ( id ))
+  interleaved sortkey (type,timestamp_redshift,level,to_redshift);
+-------------------------------------------------------------------------------------
+
+CREATE TABLE chrome_production.organizations (
+  id integer NOT NULL IDENTITY(1,1),
+  name varchar(255) DEFAULT NULL,
+  createdAt timestamp NOT NULL,
+  updatedAt timestamp NOT NULL,
+  PRIMARY KEY (id));
+
+------------------------------------------------------------------------------------
+
+CREATE TABLE  chrome_production.orgs  (
+   id  integer NULL IDENTITY(1,1),
+   name  varchar(255) NOT NULL,
+   orgId  varchar(32) NOT NULL,
+   address  varchar(512) DEFAULT NULL,
+   phone  varchar(500) DEFAULT NULL,
+   fax  varchar(32) DEFAULT NULL,
+   website  varchar(256),
+   live  varchar(2048) DEFAULT NULL,
+   ownerId  integer DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+   deleted_at  timestamp DEFAULT NULL,
+   logo  varchar(256),
+   zipCode  varchar(5) DEFAULT NULL,
+   stateCode  varchar(5) DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (orgId,live,ownerId,zipCode,stateCode);
+
+  
+---------------------------------------------------------------------------------------------
+NOTE 1: Removed unsigned Values Because Redshift does not support unsigned Values
+NOTE 2: Comment was not add in orgid 
+NOTE 3: Removed CHARSET=utf8 from ENGINE=InnoDB
+NOTE 4: Removed foreign key 
+-------------------------------------------------------------------------------------
+
+
+CREATE TABLE  chrome_production.orphan_events (
+   timestamp  integer NOT NULL,
+   activeTime  integer NOT NULL,
+   inactiveTime  integer NOT NULL,
+   source  varchar(2048) NOT NULL,
+   src_hash  varchar(20) DEFAULT NULL,
+   type  varchar(256) DEFAULT 'website',
+   os  varchar(32) NOT NULL,
+   collectorId  varchar(32) NOT NULL,
+   platformInfo varchar(256),
+   lifetime  varchar(256),
+   clientVersion  varchar(32) NOT NULL,
+   orgId  varchar(32) NOT NULL,
+   entityId  varchar(32) NOT NULL,
+   senderId  varchar(80) NOT NULL,
+   domainId  varchar(112) NOT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL)
+   interleaved sortkey (timestamp,source,type,os,collectorId,clientVersion,orgId,entityId);
+
+-------------------------------------------------------------------------------------
+   
+Note 1: 2 Shortkey left ( senderId, domainId ) 
+Note 2: src_hash  varbinary(20) DEFAULT NULL, -----> Changed too varchar(20)
+NOTE 3: Removed unsigned Values Because Redshift does not support unsigned Values
+NOTE 4: Removed enum('website','app') from type
+NOTE 5: Removed CHARSET=utf8 from ENGINE=InnoDB
+-------------------------------------------------------------------------------------
+
+CREATE TABLE chrome_production.permissions_redshift(
+   id  integer NOT NULL identity(1,1),
+   name  varchar(255) NOT NULL,
+   action varchar(255) DEFAULT 'ADD',
+   orgId  integer DEFAULT NULL,
+   userId  integer  DEFAULT NULL,
+   roleId  integer  DEFAULT NULL,
+   entityId  integer  DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+   createdAt  timestamp DEFAULT NULL,
+   updatedAt  timestamp DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (name,action,userId,roleId,entityId);
+-----------------------------------------------------------------
+NOTE : removed foreign key 
+-----------------------------------------------------------------
+
+CREATE TABLE  chrome_production.roles  (
+   id  integer  NOT NULL IDENTITY(1,1),
+   name  varchar(255) NOT NULL,
+   orgId  integer DEFAULT NULL,
+   parentId  integer DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+   createdAt  timestamp DEFAULT NULL,
+   updatedAt  timestamp DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (name,orgId,parentId);
+  
+-------------------------------------------------------------------------------------
+
+NOTE 1: Removed unsigned Values Because Redshift does not support unsigned Values
+NOTE 2: COMMENT Not Added in 'redundant column of createdAT, updatedAT
+NOTE 3: Removed CHARSET=utf8 from ENGINE=InnoDB
+NOTE 4: Removed CONSTRAINT = Foreign KEY
+
+-------------------------------------------------------------------------------------
+
+CREATE TABLE  chrome_production.roles_permissions  (
+   roleId  integer  DEFAULT NULL,
+   permissionId  integer  DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL)
+   interleaved sortkey (roleId,permissionId);
+
+---------------------------------------------------------------------------------------------
+NOTE 1: Removed unsigned Values Because Redshift does not support unsigned Values
+NOTE 2 : Removed CONSTRAINT _ FOREIGN KEY
+
+-------------------------------------------------------------------------------------
+
+CREATE TABLE  chrome_production.senders  (
+   id  integer NOT NULL IDENTITY(1,1),
+   firstName  varchar(50) DEFAULT NULL,
+   lastName  varchar(50) DEFAULT NULL,
+   userId  char(50) NOT NULL,
+   orgId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL,
+   created_at  timestamp NULL DEFAULT NULL,
+   updated_at  timestamp NULL DEFAULT NULL,
+   machineId  varchar(80) DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (orgId,entityId);
+
+---------------------------------------------------------------------------------------------
+
+NOTE 1: Removed unsigned Values Because Redshift does not support unsigned Values
+NOTE 2: COMMENT Not Added in 'redundant column of userId and OrgId
+NOTE 3: Removed CHARSET=utf8 from ENGINE=InnoDB
+NOTE 4: Removed CONSTRAINT _ FOREIGN KEY and UNIQUE KEY
+
+---------------------------------------------------------------------------------------------
+
+CREATE TABLE  chrome_production.senders_groups  (
+   groupId  integer DEFAULT NULL,
+   senderId  integer DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL)
+   interleaved sortkey (groupId,senderId);
+
+
+---------------------------------------------------------------------------------------------
+
+NOTE 1: Removed unsigned Values Because Redshift does not support unsigned Values
+NOTE 2: removed foreign key 
+
+
+-------------------------------------------------------------------------------------
+
+
+CREATE TABLE  chrome_production.settings  (
+   id  integer NOT NULL IDENTITY(1,1),
+   name  varchar(255) NOT NULL,
+   type  varchar(255) NOT NULL DEFAULT 'string',
+   value  text,
+   userId  integer DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+   createdAt  timestamp DEFAULT NULL,
+   updatedAt  timestamp DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (name,userId);
+
+---------------------------------------------------------------------------------------------
+
+NOTE : Removed unsigned Values Because Redshift does not support unsigned Values
+NOTE : Removed CONSTRAINT _ FOREIGN KEY
+
+---------------------------------------------------------------------------------------
+
+CREATE TABLE  chrome_production.tags  (
+   id  integer NOT NULL IDENTITY(1,1),
+   entityId  integer  DEFAULT NULL,
+   orgId  integer DEFAULT NULL,
+   name  varchar(255) NOT NULL,
+   color  varchar(16) DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (entityId,orgId,name);
+
+
+---------------------------------------------------------------------------------------------
+
+NOTE: Removed unsigned Values Because Redshift does not support unsigned Values
+
+-------------------------------------------------------------------------------------
+
+
+CREATE TABLE  chrome_production.tracks  (
+   id  integer NOT NULL identity(1,1),
+   userId  varchar(255) DEFAULT NULL,
+   orgId  integer NOT NULL,
+   entityId  integer NOT NULL,
+   processed  integer NOT NULL DEFAULT '0',
+  PRIMARY KEY ( id ))
+  interleaved sortkey (userId);
+
+---------------------------------------------------------------------------------------------
+NOTE : Removed CHARACTER SET utf8mb4 Redshift does not support Utf8
+
+-------------------------------------------------------------------------------------
+
+CREATE TABLE chrome_production.users  (
+   id  integer  NOT NULL identity(154,1),
+   username  varchar(255) NOT NULL,
+   email  varchar(255) NOT NULL,
+   orgId  integer  DEFAULT NULL,
+   entityId  integer  DEFAULT NULL,
+   roleId  integer  DEFAULT NULL,
+   firstName  varchar(255) DEFAULT NULL,
+   lastName  varchar(255) DEFAULT NULL,
+   avatar  varchar(256),
+   password  varchar(256) NOT NULL,
+   activated  int2 DEFAULT '1',
+   disabled  int2 DEFAULT '0',
+   setupComplete  int2 DEFAULT '1',
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+   deleted_at  timestamp DEFAULT NULL,
+   meta  varchar(512) DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (username,email,orgId,entityId,roleId,activated,disabled,setupComplete);
+
+-------------------------------------------------------------------------------------------------------------
+
+Note : Removed CONSTRAINT _ FOREIGN KEYS
+
+--------------------------------------------------
+
+
+CREATE TABLE  chrome_production.users_data  (
+   id  integer NOT NULL IDENTITY(1,1),
+   type  varchar(32) NOT NULL,
+   data  text,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+   userId  integer DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (type,userId);
+
+---------------------------------------------------------------------------------------------
+
+NOTE 1 : Removed unsigned Value Becs Redshift does not support Unsigned
+NOTE 2 : removed foreign keys 
+
+
+---------------------------------------------------------------------------------------------
+
+CREATE TABLE  chrome_production.users_groups  (
+   groupId  integer  DEFAULT NULL,
+   userId  integer  DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL)
+   interleaved sortkey (groupId,userId);
+
+
+---------------------------------------------------------------------------------------------
+
+
+NOTE 1: Removed unsigned Value Becs Redshift does not support Unsigned
+NOTE 2 : Removed foreign key 
+
+
+---------------------------------------------------------------------------------------------
+
+
+CREATE TABLE  chrome_production.users_senders_groups  (
+   userId  integer  DEFAULT NULL,
+   groupId  integer  DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL)
+   interleaved sortkey (userId,groupId);
+
+
+-------------------------------------------------------------------------------------------------
+NOTE 1 : Removed unsigned Value Becs Redshift does not support Unsigned
+NOTE 2 : Removed foreign key 
+---------------------------------------------------------------------------------------------
