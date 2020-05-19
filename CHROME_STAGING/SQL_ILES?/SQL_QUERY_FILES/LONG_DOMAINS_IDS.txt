@@ -1,0 +1,4 @@
+CREATE TABLE `long_domains_ids` (
+  `id` int(11) unsigned NOT NULL DEFAULT '0',
+  `name` varchar(255) CHARACTER SET utf8mb4 NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

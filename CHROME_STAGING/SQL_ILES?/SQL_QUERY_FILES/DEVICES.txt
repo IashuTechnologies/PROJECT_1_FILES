@@ -1,0 +1,13 @@
+CREATE TABLE `devices` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` char(32) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `machineId` char(32) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `devices_name_machineid_orgid_unique` (`name`,`machineId`,`orgId`),
+  KEY `devices_name_index` (`name`),
+  KEY `devices_machineid_index` (`machineId`),
+  KEY `devices_orgid_index` (`orgId`)
+) ENGINE=InnoDB AUTO_INCREMENT=9978 DEFAULT CHARSET=latin1;

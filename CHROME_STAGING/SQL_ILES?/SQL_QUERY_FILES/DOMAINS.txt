@@ -1,0 +1,13 @@
+CREATE TABLE `domains` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `alias` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` enum('website','app') CHARACTER SET utf8mb4 DEFAULT 'website',
+  `icon` text CHARACTER SET utf8mb4,
+  `paid` tinyint(1) DEFAULT NULL,
+  `default_category` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `domains_name_index` (`name`(191)) USING BTREE,
+  KEY `domains_type_index` (`type`)
+) ENGINE=InnoDB AUTO_INCREMENT=714132 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

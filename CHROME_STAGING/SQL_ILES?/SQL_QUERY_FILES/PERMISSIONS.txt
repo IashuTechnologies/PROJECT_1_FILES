@@ -1,0 +1,20 @@
+CREATE TABLE `permissions` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `action` enum('ADD','REVOKE') DEFAULT 'ADD',
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `userId` int(11) unsigned DEFAULT NULL,
+  `roleId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `createdAt` datetime DEFAULT NULL COMMENT 'redundant column to be eliminated',
+  `updatedAt` datetime DEFAULT NULL COMMENT 'redundant column to be eliminated',
+  PRIMARY KEY (`id`),
+  KEY `permissions_name_index` (`name`(191)),
+  KEY `permissions_action_index` (`action`),
+  KEY `permissions_orgid_index` (`orgId`),
+  KEY `permissions_userid_index` (`userId`),
+  KEY `permissions_roleid_index` (`roleId`),
+  KEY `permissions_entityid_index` (`entityId`)
+) ENGINE=InnoDB AUTO_INCREMENT=2481 DEFAULT CHARSET=utf8mb4;

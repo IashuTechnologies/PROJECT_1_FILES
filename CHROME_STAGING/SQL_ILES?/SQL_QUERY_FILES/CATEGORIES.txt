@@ -1,0 +1,8 @@
+CREATE TABLE `categories` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `categories_name_index` (`name`(191))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

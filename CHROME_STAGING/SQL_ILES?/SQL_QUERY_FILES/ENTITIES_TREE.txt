@@ -1,0 +1,9 @@
+CREATE TABLE `entities_tree` (
+  `entityId` int(11) DEFAULT NULL,
+  `childId` int(11) DEFAULT NULL,
+  `orgId` int(11) DEFAULT NULL,
+  KEY `comp_idx` (`orgId`,`entityId`,`childId`),
+  KEY `orgId` (`orgId`),
+  KEY `entityId` (`entityId`),
+  KEY `childId` (`childId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

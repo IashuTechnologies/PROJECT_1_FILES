@@ -1,0 +1,8 @@
+CREATE TABLE `users_groups` (
+  `groupId` int(11) unsigned DEFAULT NULL,
+  `userId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  KEY `users_groups_groupid_index` (`groupId`),
+  KEY `users_groups_userid_index` (`userId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

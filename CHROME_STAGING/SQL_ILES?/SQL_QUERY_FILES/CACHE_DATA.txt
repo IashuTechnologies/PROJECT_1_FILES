@@ -1,0 +1,23 @@
+CREATE TABLE `cache_data` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `cache_event_id` int(11) DEFAULT NULL,
+  `source` varchar(3000) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `domain_id` int(11) DEFAULT NULL,
+  `browser` varchar(100) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `icon` varchar(2000) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `type` varchar(30) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `active_time` int(11) DEFAULT NULL,
+  `inactive_time` int(11) DEFAULT NULL,
+  `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `sync_batch_id` int(11) NOT NULL DEFAULT '0',
+  `events_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `cache_event_id` (`cache_event_id`),
+  KEY `domain_id` (`domain_id`),
+  KEY `sync_batch_id` (`sync_batch_id`),
+  KEY `type` (`type`),
+  KEY `events_id` (`events_id`),
+  KEY `created` (`created`)
+) ENGINE=InnoDB AUTO_INCREMENT=84611638 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+

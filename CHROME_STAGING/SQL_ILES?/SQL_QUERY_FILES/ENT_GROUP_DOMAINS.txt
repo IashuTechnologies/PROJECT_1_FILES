@@ -1,0 +1,10 @@
+CREATE TABLE `ent_group_domains` (
+  `orgId` int(11) DEFAULT NULL,
+  `entityId` int(11) DEFAULT NULL,
+  `domainId` int(11) DEFAULT NULL,
+  `groupId` int(11) DEFAULT NULL,
+  KEY `ent_group_domains_orgId` (`orgId`),
+  KEY `ent_group_domains_entityId` (`entityId`),
+  KEY `ent_group_domains_domainId` (`domainId`),
+  KEY `ent_group_domains_groupId` (`groupId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

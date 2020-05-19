@@ -1,0 +1,14 @@
+CREATE TABLE `settings` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `type` varchar(255) NOT NULL DEFAULT 'string',
+  `value` text,
+  `userId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `createdAt` datetime DEFAULT NULL,
+  `updatedAt` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `settings_name_index` (`name`(191)),
+  KEY `settings_userid_index` (`userId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

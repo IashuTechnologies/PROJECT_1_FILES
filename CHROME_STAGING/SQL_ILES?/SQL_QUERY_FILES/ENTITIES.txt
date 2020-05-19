@@ -1,0 +1,22 @@
+CREATE TABLE `entities` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `displayName` char(255) DEFAULT NULL,
+  `address` text,
+  `phone` text,
+  `fax` text,
+  `website` text,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `parentId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `zipCode` varchar(5) DEFAULT NULL,
+  `stateCode` varchar(5) DEFAULT NULL,
+  `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `entities_name_index` (`name`(191)),
+  KEY `entities_orgid_index` (`orgId`),
+  KEY `entities_parentid_index` (`parentId`),
+  KEY `entities_zipcode_index` (`zipCode`),
+  KEY `entities_statecode_index` (`stateCode`)
+) ENGINE=InnoDB AUTO_INCREMENT=179 DEFAULT CHARSET=utf8mb4;

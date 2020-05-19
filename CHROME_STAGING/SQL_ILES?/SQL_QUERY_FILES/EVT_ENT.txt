@@ -1,0 +1,17 @@
+CREATE TABLE `evt_ent` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `activeTime` int(11) unsigned DEFAULT NULL,
+  `inactiveTime` int(11) unsigned DEFAULT NULL,
+  `timestamp` int(11) DEFAULT NULL,
+  `orgId` int(11) DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `domainId` int(11) unsigned DEFAULT NULL,
+  `dt` date DEFAULT NULL,
+  `type` varchar(30) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `evt_ent_entityid_index` (`entityId`),
+  KEY `evt_ent_domainid_index` (`domainId`),
+  KEY `dt` (`dt`),
+  KEY `timestamp` (`timestamp`),
+  KEY `orgId` (`orgId`)
+) ENGINE=InnoDB AUTO_INCREMENT=171832619 DEFAULT CHARSET=latin1;

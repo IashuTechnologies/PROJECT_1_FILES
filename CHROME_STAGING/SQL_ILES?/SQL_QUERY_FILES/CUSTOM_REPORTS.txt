@@ -1,0 +1,26 @@
+
+CREATE TABLE `custom_reports` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `query` text NOT NULL,
+  `emailsList` text,
+  `interval` int(11) unsigned DEFAULT NULL,
+  `intervalUnit` enum('hour','day','month','year') DEFAULT 'day',
+  `frequency` int(11) unsigned DEFAULT NULL,
+  `frequencyUnit` enum('hour','day','month','year') DEFAULT 'day',
+  `emailInterval` int(11) unsigned DEFAULT NULL,
+  `userId` int(11) unsigned DEFAULT NULL,
+  `nextUpdate` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `custom_reports_userid_name_unique` (`userId`,`name`),
+  KEY `custom_reports_interval_index` (`interval`),
+  KEY `custom_reports_intervalunit_index` (`intervalUnit`),
+  KEY `custom_reports_frequency_index` (`frequency`),
+  KEY `custom_reports_frequencyunit_index` (`frequencyUnit`),
+  KEY `custom_reports_emailinterval_index` (`emailInterval`),
+  KEY `custom_reports_userid_index` (`userId`),
+  KEY `custom_reports_nextupdate_index` (`nextUpdate`),
+  CONSTRAINT `custom_reports_userid_foreign` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;

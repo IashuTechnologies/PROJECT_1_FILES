@@ -1,0 +1,8 @@
+CREATE TABLE `roles_permissions` (
+  `roleId` int(11) unsigned DEFAULT NULL,
+  `permissionId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  KEY `roles_permissions_roleid_index` (`roleId`),
+  KEY `roles_permissions_permissionid_index` (`permissionId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

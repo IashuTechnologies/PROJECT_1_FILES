@@ -1,0 +1,22 @@
+CREATE TABLE `evt_fav` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `activeTime` int(11) unsigned NOT NULL DEFAULT '0',
+  `inactiveTime` int(11) unsigned NOT NULL DEFAULT '0',
+  `timestamp` int(11) unsigned DEFAULT NULL,
+  `senderId` int(11) unsigned DEFAULT NULL,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `domainId` int(11) unsigned DEFAULT NULL,
+  `favoriteId` int(11) unsigned DEFAULT NULL,
+  `dt` date DEFAULT NULL,
+  `type` enum('website','app') DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `senderId` (`senderId`,`favoriteId`,`dt`),
+  KEY `evt_fav_timestamp_index` (`timestamp`),
+  KEY `evt_fav_senderid_index` (`senderId`),
+  KEY `evt_fav_orgid_index` (`orgId`),
+  KEY `evt_fav_entityid_index` (`entityId`),
+  KEY `evt_fav_domainid_index` (`domainId`),
+  KEY `evt_fav_favoriteid_index` (`favoriteId`),
+  KEY `dt` (`dt`)
+) ENGINE=InnoDB AUTO_INCREMENT=176532289 DEFAULT CHARSET=utf8mb4;
