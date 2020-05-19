@@ -1,0 +1,102 @@
+COPY chrome_staging.alerts
+from 's3://mysqltoredshiftmigration20.03/new/alerts_1.csv'
+iam_role 'arn:aws:iam::615526901299:role/redshiftcopy'
+delimiter ',' IGNOREHEADER 1 timeformat 'auto' ;
+
+
+COPY chrome_staging.custom_reports
+from 's3://mysqltoredshiftmigration20.03/new/custom_reports1.csv'
+iam_role 'arn:aws:iam::615526901299:role/redshiftcopy'
+delimiter ',' IGNOREHEADER 1
+timeformat 'auto';
+
+COPY chrome_staging.entities
+from 's3://mysqltoredshiftmigration20.03/new/entities_1.csv'
+iam_role 'arn:aws:iam::615526901299:role/redshiftcopy'
+delimiter ',' IGNOREHEADER 1
+timeformat 'auto';
+
+COPY chrome_staging.favorites
+from 's3://mysqltoredshiftmigration20.03/new/favorites_1.csv'
+iam_role 'arn:aws:iam::615526901299:role/redshiftcopy'
+delimiter ',' IGNOREHEADER 1
+timeformat 'auto';
+
+
+COPY chrome_staging.knex_migrations
+from 's3://mysqltoredshiftmigration20.03/new/knex_migrations.csv'
+iam_role 'arn:aws:iam::615526901299:role/redshiftcopy'
+delimiter ',' IGNOREHEADER 1
+timeformat 'auto';
+
+
+COPY chrome_staging.orgs
+from 's3://mysqltoredshiftmigration20.03/new/orgs.csv'
+iam_role 'arn:aws:iam::615526901299:role/redshiftcopy'
+delimiter ',' IGNOREHEADER 1
+timeformat 'auto';
+
+COPY chrome_staging.permissions_redshift
+from 's3://mysqltoredshiftmigration20.03/new/permissions_1.csv'
+iam_role 'arn:aws:iam::615526901299:role/redshiftcopy'
+delimiter ',' IGNOREHEADER 1
+timeformat 'auto';
+
+
+COPY chrome_staging.domains_tags
+from 's3://mysqltoredshiftmigration20.03/new/domains_tags.csv'
+iam_role 'arn:aws:iam::615526901299:role/redshiftcopy'
+delimiter '|' IGNOREHEADER 1;
+
+
+COPY chrome_staging.entities_domains
+from 's3://mysqltoredshiftmigration20.03/entities_domains.csv'
+iam_role 'arn:aws:iam::615526901299:role/redshiftcopy'
+delimiter '|' IGNOREHEADER 1
+timeformat 'auto';
+
+COPY chrome_staging.evt_dates
+from 's3://mysqltoredshiftmigration20.03/evt_dates.csv'
+iam_role 'arn:aws:iam::615526901299:role/redshiftcopy'
+delimiter '|' IGNOREHEADER 1
+timeformat 'auto';
+
+
+COPY chrome_staging.entities_domains
+from 's3://mysqltoredshiftmigration20.03/entities_domains_111.csv'
+iam_role 'arn:aws:iam::615526901299:role/redshiftcopy'
+delimiter '|' IGNOREHEADER 1
+timeformat 'auto';
+
+COPY chrome_staging.long_domains_ids
+from 's3://mysqltoredshiftmigration20.03/long_domains_ids.csv'
+iam_role 'arn:aws:iam::615526901299:role/redshiftcopy'
+delimiter '|' IGNOREHEADER 1
+timeformat 'auto';
+
+
+COPY chrome_staging.clients
+from 's3://mysqltoredshiftmigration20.03/new/clients.csv'
+iam_role 'arn:aws:iam::615526901299:role/redshiftcopy'
+delimiter '|' IGNOREHEADER 1
+timeformat 'auto';
+
+ACCEPTINVCHARS AS 'test'
+
+COPY chrome_staging.domains
+from 's3://mysqltoredshiftmigration20.03/client/domains_1.csv'
+iam_role 'arn:aws:iam::615526901299:role/redshiftcopy'
+delimiter '\t' acceptinvchars ESCAPE IGNOREHEADER 1
+timeformat 'auto';
+
+COPY chrome_staging.a_tmp
+from 's3://mysqltoredshiftmigration20.03/a_tmp3.csv'
+iam_role 'arn:aws:iam::615526901299:role/redshiftcopy'
+delimiter '|' IGNOREHEADER 1
+timeformat 'auto';
+
+COPY chrome_staging.long_domains_ids
+from 's3://mysqltoredshiftmigration20.03/delimiter/long_domains_idsfinal_1.csv'
+iam_role 'arn:aws:iam::615526901299:role/redshiftcopy'
+delimiter '|' acceptinvchars ESCAPE IGNOREHEADER 1
+timeformat 'auto';

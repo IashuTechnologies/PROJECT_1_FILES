@@ -1,0 +1,13 @@
+CREATE TABLE  domains  (
+   id  integer NOT NULL Identity(1,1),
+   name  varchar(255) NOT NULL,
+   alias  varchar(255) COLLATE  _unicode_ci DEFAULT NULL,
+   type  enum('website','app') CHARACTER SET   DEFAULT 'website',
+   icon  varchar(256),
+   paid  INT2 DEFAULT NULL,
+   default_category  varchar(255) COLLATE  _unicode_ci DEFAULT NULL,
+   created_at  timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY ( id ))
+  sortkey (type);
+
+note: removed unsigned,collate,enum,uniquekey

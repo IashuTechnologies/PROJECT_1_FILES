@@ -1,0 +1,19 @@
+CREATE TABLE  orphan_events  (
+   timestamp  integer NOT NULL,
+   activeTime  integer NOT NULL,
+   inactiveTime  integer NOT NULL,
+   source  varchar(2048) NOT NULL,
+   src_hash  varchar(20) DEFAULT NULL,
+   type  varchar(256) DEFAULT 'website',
+   os  varchar(32) NOT NULL,
+   collectorId  varchar(32) NOT NULL,
+   platformInfo varchar(256),
+   lifetime  varchar(256),
+   clientVersion  varchar(32) NOT NULL,
+   orgId  varchar(32) NOT NULL,
+   entityId  varchar(32) NOT NULL,
+   senderId  varchar(80) NOT NULL,
+   domainId  varchar(112) NOT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL)
+   interleaved sortkey (timestamp,source,type,os,collectorId,clientVersion,orgId,entityId);

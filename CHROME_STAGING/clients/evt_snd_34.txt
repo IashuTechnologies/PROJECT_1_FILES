@@ -1,0 +1,16 @@
+CREATE TABLE chrome_staging.evt_snd (
+  activeTime integer  DEFAULT NULL,
+  inactiveTime integer  DEFAULT NULL,
+  _timestamp_old integer NOT NULL,
+  senderId integer  DEFAULT NULL,
+  orgId integer DEFAULT NULL,
+  entityId integer  DEFAULT NULL,
+  domainId integer  DEFAULT NULL,
+  dt timestamp DEFAULT NULL,
+  id integer NOT NULL identity(1,1),
+  timestamp_redshift integer  NOT NULL DEFAULT '0',
+  type char(30) DEFAULT NULL,
+  PRIMARY KEY (id))
+     interleaved sortkey (_timestamp_old,entityId,domainId,senderId,orgId,dt); 
+note : unsigned is remobed and comment is removed.
+
