@@ -1,0 +1,16 @@
+CREATE TABLE `roles` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `parentId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `createdAt` datetime DEFAULT NULL COMMENT 'redundant column to be eliminate',
+  `updatedAt` datetime DEFAULT NULL COMMENT 'redundant column to be eliminate',
+  PRIMARY KEY (`id`),
+  KEY `roles_name_index` (`name`(191)),
+  KEY `roles_orgid_index` (`orgId`),
+  KEY `roles_parentid_index` (`parentId`)
+) ENGINE=InnoDB AUTO_INCREMENT=212 DEFAULT CHARSET=utf8mb4;
+
+

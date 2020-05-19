@@ -1,0 +1,6 @@
+CREATE TABLE `a_tmp` (
+  `cache_event_id` int(11) NOT NULL AUTO_INCREMENT,
+  `sender_id` int(11) DEFAULT NULL,
+  `body` text,
+  PRIMARY KEY (`cache_event_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2728340 DEFAULT CHARSET=utf8;

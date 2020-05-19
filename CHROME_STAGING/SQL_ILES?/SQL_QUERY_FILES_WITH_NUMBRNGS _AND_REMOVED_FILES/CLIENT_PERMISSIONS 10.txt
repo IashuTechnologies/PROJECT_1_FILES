@@ -1,0 +1,8 @@
+CREATE TABLE `clients_permissions` (
+  `clientId` int(11) unsigned DEFAULT NULL,
+  `permissionId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  KEY `clients_permissions_clientid_index` (`clientId`),
+  KEY `clients_permissions_permissionid_index` (`permissionId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

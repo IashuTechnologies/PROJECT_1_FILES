@@ -1,0 +1,8 @@
+CREATE TABLE `clients_entities` (
+  `clientId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  KEY `clients_entities_clientid_index` (`clientId`),
+  KEY `clients_entities_entityid_index` (`entityId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

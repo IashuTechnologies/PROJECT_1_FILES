@@ -1,0 +1,13 @@
+CREATE TABLE `evt_devices` (
+  `activeTime` int(11) unsigned NOT NULL,
+  `inactiveTime` int(11) unsigned NOT NULL,
+  `timestamp` int(11) unsigned NOT NULL,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `deviceId` int(11) unsigned DEFAULT NULL,
+  `dt` date DEFAULT NULL,
+  KEY `evt_devices_timestamp_index` (`timestamp`),
+  KEY `evt_devices_orgid_index` (`orgId`),
+  KEY `evt_devices_entityid_index` (`entityId`),
+  KEY `evt_devices_deviceid_index` (`deviceId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

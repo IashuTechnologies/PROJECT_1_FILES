@@ -1,0 +1,16 @@
+CREATE TABLE `notifications` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sent` tinyint(1) NOT NULL DEFAULT '0',
+  `type` varchar(255) NOT NULL,
+  `subject` text NOT NULL,
+  `to` varchar(255) NOT NULL,
+  `template` text NOT NULL,
+  `templateVars` text NOT NULL,
+  `timestamp` int(11) unsigned NOT NULL,
+  `level` int(8) DEFAULT '-1',
+  PRIMARY KEY (`id`),
+  KEY `notifications_type_index` (`type`(191)),
+  KEY `notifications_timestamp_index` (`timestamp`),
+  KEY `notifications_level_index` (`level`),
+  KEY `tio` (`to`(191))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

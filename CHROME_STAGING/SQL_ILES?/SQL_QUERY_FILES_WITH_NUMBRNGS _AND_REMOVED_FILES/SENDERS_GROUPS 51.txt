@@ -1,0 +1,8 @@
+CREATE TABLE `senders_groups` (
+  `groupId` int(11) unsigned DEFAULT NULL,
+  `senderId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  KEY `senders_groups_groupid_index` (`groupId`),
+  KEY `senders_groups_senderid_index` (`senderId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
