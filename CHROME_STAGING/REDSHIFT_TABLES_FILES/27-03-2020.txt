@@ -1,0 +1,15 @@
+DATE: 27-03-2020
+
+1.In ALL_files updated tables with notes what need to be added
+2.IN REDSHIFT 
+   ADDED TABLES - 33
+   INSERTED DATA - 5
+   
+3.TOMMORROW'S PLAN :
+  1.REMAINING TABLES TO BE UPLOAD IN REDSHIFT.
+  2.REMAINING TABLES DATA TO BE UPLOAD IN REDSHIFT.
+  
+4.ISSUES_FACED :
+   1. ERROR in loading data for timestamp 
+   
+

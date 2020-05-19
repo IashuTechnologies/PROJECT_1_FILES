@@ -1,0 +1,20 @@
+CREATE TABLE chrome_staging.custom_reports (
+  id integer NOT NULL Identity(1,1),
+  name varchar(255) NOT NULL,
+  query varchar(5000) NOT NULL,
+  emailsList varchar(256),
+  interval integer DEFAULT NULL,
+  intervalUnit varchar(256) DEFAULT 'day',
+  frequency integer DEFAULT NULL,
+  frequencyUnit varchar(256) DEFAULT 'day',
+  emailInterval integer  DEFAULT NULL,
+  userId integer DEFAULT NULL,
+  nextUpdate timestamp DEFAULT NULL,
+  created_at timestamp DEFAULT NULL,
+  updated_at timestamp DEFAULT NULL,
+  PRIMARY KEY (id))
+  interleaved sortkey (interval,intervalUnit,frequency,frequencyUnit,emailInterval,userId,nextUpdate); 
+ 
+
+
+note: enum not working,unsigned,unique key  removed

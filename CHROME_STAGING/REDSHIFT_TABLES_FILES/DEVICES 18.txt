@@ -1,0 +1,12 @@
+CREATE TABLE  devices  (
+   id  integer NOT NULL Identity(1,1),
+   name  char(32) DEFAULT NULL,
+   machineId  char(32) DEFAULT NULL,
+   orgId  integer DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (name,machineId,orgId); 
+
+
+note:unique key,unsigned,character set removed

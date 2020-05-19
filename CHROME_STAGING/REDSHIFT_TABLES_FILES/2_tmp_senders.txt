@@ -1,0 +1,13 @@
+CREATE TABLE  _tmp_senders  (
+   id  integer not NULL IDENTITY(1,1),
+   firstName  varchar(50) DEFAULT NULL,
+   lastName  varchar(50) DEFAULT NULL,
+   entity  varchar(50) DEFAULT NULL,
+   sessionId  varchar(80) DEFAULT NULL,
+   senderId  varchar(50) DEFAULT NULL,
+   userId  char(50) NOT NULL,
+   orgId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL,
+   machineId  varchar(80) DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (orgId,entityId);

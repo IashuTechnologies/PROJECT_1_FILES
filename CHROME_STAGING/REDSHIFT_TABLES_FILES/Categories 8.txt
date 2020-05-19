@@ -1,0 +1,8 @@
+CREATE TABLE  categories  (
+   id  integer NOT NULL Identity(1,1),
+   name  varchar(255) NOT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  sortkey (name);  
+  

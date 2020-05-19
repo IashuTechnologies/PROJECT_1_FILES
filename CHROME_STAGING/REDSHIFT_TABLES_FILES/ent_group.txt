@@ -1,0 +1,7 @@
+CREATE TABLE  ent_group  (
+   id  integer  NOT NULL IDENTITY(1,1),
+   orgId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL,
+   name  varchar(255) NOT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (entityId, orgId,name);

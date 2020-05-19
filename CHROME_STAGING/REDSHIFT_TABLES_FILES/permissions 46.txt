@@ -1,0 +1,15 @@
+CREATE TABLE  chrome_staging.permissions_redshift(
+   id  integer NOT NULL identity(1,1),
+   name  varchar(255) NOT NULL,
+   action varchar(255) DEFAULT 'ADD',
+   orgId  integer DEFAULT NULL,
+   userId  integer  DEFAULT NULL,
+   roleId  integer  DEFAULT NULL,
+   entityId  integer  DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+   createdAt  timestamp DEFAULT NULL,
+   updatedAt  timestamp DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (name,action,userId,roleId,entityId);
+  

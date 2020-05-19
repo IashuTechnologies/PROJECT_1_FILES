@@ -1,0 +1,39 @@
+DATE: 26-03-2020
+
+1st. IN ALL_FILES : (Update sql query and redshift query in single file) 
+       Completed tables :           25 
+	   Note in Completed tables :    8
+	   Error in tables :             3 
+	   Remaining tables :           30
+                          ----------------------------	   
+						             58 (Without _removed_tables)
+						   ----------------------------	   						 				 
+        Removed_tables : 6,7,14,15,16,17,49 
+                        ------------------------------------------------------
+                                     51 tables
+                        ------------------------------------------------------	
+2nd. Another 8 TABLES UPDATED in another file (sql query and redshift query)  
+
+3rd. IN EC2 INSTANCE (Export_sql_query_Data_in_CLI)
+          TO_CSV_WITH_QUOTES :                 29 tables
+		  TO_CSV_WITHOUT_QUOTES :              29 tables
+		  ERROR_IN_CONVERTING_TO_CSV :          2 tables
+		  EMPTY_IN_CONVERTING_TO_CSV :         15 tables 
+		  CLIENT_OUT_OF_MEMORY_ERROR :          2 tables
+		  		  
+4th. IN S3 BUCKET UPLOADED CSV FILES :  29 tables 
+
+5th. TWO TABLES ARE UPLOADED IN REDSHIFT.
+			  
+TOMMORROW'S PLAN :
+   1.  EXPORT_SQL_QUERY in ERROR(2 tables) AND CLIENT_OUT_OF_MEMORY_ERROR(2 tables).
+   2.  REMAINING TABLES TO BE UPLOAD IN S3 BUCKET.
+   3.  REMAINING TABLES TO BE UPLOAD IN REDSHIFT.
+   4.  REMAINING TABLES TO BE ADD IN ALL_FILES. 
+   
+ISSUES_FACED :
+   1. ERROR in 1st.
+   2. ERROR AND CLIENT_OUT_OF_MEMORY in 2nd.
+   
+
+

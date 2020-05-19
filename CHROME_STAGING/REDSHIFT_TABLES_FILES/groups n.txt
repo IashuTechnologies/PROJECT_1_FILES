@@ -1,0 +1,9 @@
+CREATE TABLE  groups  (
+   id  integer NOT NULL IDENTITY(1,1),
+   orgId  integer DEFAULT NULL,
+   deleted_at  timestamp DEFAULT NULL,
+   type  varchar(255) DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (orgId,type);

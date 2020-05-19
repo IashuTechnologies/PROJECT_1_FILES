@@ -1,0 +1,5 @@
+CREATE TABLE  entities_tree  (
+   entityId  integer DEFAULT NULL,
+   childId  integer DEFAULT NULL,
+   orgId  integer DEFAULT NULL)
+   interleaved sortkey (orgId,entityId,childId);

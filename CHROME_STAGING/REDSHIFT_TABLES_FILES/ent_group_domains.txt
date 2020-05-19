@@ -1,0 +1,6 @@
+CREATE TABLE  ent_group_domains  (
+   orgId  integer  DEFAULT NULL,
+   entityId  integer  DEFAULT NULL,
+   domainId  integer  DEFAULT NULL,
+   groupId  integer  DEFAULT NULL)
+   interleaved sortkey (orgId,entityId,domainId,groupId);

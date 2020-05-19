@@ -1,0 +1,6 @@
+CREATE TABLE  clients_permissions  (
+   clientId  integer DEFAULT NULL,
+   permissionId  integer DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL)
+   interleaved sortkey (clientId,permissionId); 

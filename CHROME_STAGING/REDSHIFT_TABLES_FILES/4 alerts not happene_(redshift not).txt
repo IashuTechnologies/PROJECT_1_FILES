@@ -1,0 +1,18 @@
+CREATE TABLE  alerts  (
+   id  integer NOT NULL IDENTITY(1,1),
+   name  varchar(255) NOT NULL,
+   userId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL COMMENT 'redundant column',
+   optimalUsage  decimal(8,2) NOT NULL,
+   category  enum('NONE','MODERATE','HIGH','ADMIN') DEFAULT NULL,
+   type  enum('ABSOLUTE','PERCENTAGE') DEFAULT NULL,
+   startDate  timestamp DEFAULT NULL,
+   endDate  timestamp DEFAULT NULL,
+   integererval  varchar(255) NOT NULL,
+   frequency  integer DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+   disabled  INT2 DEFAULT '0',
+   nextUpdate  integer NOT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (name,userId,entityId,category,type,startDate,endDate,,integererval);

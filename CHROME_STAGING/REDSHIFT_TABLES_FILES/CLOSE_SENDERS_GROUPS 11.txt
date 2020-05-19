@@ -1,0 +1,8 @@
+CREATE TABLE  clients_senders_groups  (
+   clientId  integer DEFAULT NULL,
+   groupId  integer DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL)
+ interleaved sortkey (clientId,groupId); 
+
+

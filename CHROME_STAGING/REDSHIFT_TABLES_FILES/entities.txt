@@ -1,0 +1,17 @@
+CREATE TABLE  entities  (
+   id  integer NOT NULL IDENTITY(1,1),
+   name  varchar(255) NOT NULL,
+   displayName  varchar(255) DEFAULT NULL,
+   address varchar(256),
+   phone varchar(256),
+   fax varchar(256),
+   website varchar(256),
+   orgId  integer DEFAULT NULL,
+   parentId  integer DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+   zipCode  varchar(5) DEFAULT NULL,
+   stateCode  varchar(5) DEFAULT NULL,
+   created  timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (name,orgId,parentId,zipCode,stateCode);

@@ -1,0 +1,18 @@
+CREATE TABLE  entities_domains  (
+   orgId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL,
+   domainId  integer NOT NULL,
+   defaultCategory  varchar(255) DEFAULT NULL,
+   expiryDate timestamp DEFAULT NULL,
+   isFavorite INT2 DEFAULT '0',
+   label  varchar(255) DEFAULT NULL,
+   description varchar(256),
+   category varchar(256) DEFAULT NULL,
+   numLicenses  integer DEFAULT NULL,
+   annualCost  decimal(8,2) DEFAULT NULL,
+   optimalUsage  decimal(8,2) DEFAULT NULL,
+   created_at  timestamp NULL DEFAULT NULL,
+   updated_at  timestamp NULL DEFAULT NULL,
+   categoryId  integer DEFAULT NULL,
+   alias  varchar(255) DEFAULT NULL)
+   interleaved sortkey (orgId,entityId,domainId,isFavorite,label,category,categoryId,numLicenses);

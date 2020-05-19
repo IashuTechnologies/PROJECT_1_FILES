@@ -1,0 +1,31 @@
+SCHEMA: chrome_staging 
+
+-----------------------------------------------------------------------------------------------
+
+MYSQL_QUERY
+-------------
+
+
+
+CREATE TABLE `a_tmp` (
+  `cache_event_id` int(11) NOT NULL AUTO_INCREMENT,
+  `sender_id` int(11) DEFAULT NULL,
+  `body` text,
+  PRIMARY KEY (`cache_event_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2728340 DEFAULT CHARSET=utf8;
+
+
+
+-----------------------------------------------------------------------------------------------
+
+REDSHIFT_QUERY
+-------------
+
+CREATE TABLE a_tmp (
+   cache_event_id integer NOT NULL IDENTITY(1,1),
+   sender_id integer DEFAULT NULL,
+   body varchar(256),
+  PRIMARY KEY (cache_event_id)
+  );
+
+--------------------------------------------------------------------------------------------------

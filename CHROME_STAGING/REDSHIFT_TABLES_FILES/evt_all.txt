@@ -1,0 +1,23 @@
+
+   CREATE TABLE  evt_all  (
+   activeTime  integer NOT NULL,
+   inactiveTime  integer NOT NULL,
+   timestamp  integer NOT NULL,
+   type varchar(256) DEFAULT 'website',
+   os  varchar(32) NOT NULL,
+   senderId integer DEFAULT NULL,
+   orgId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL,
+   domainId  integer DEFAULT NULL,
+   deviceId  integer DEFAULT NULL,
+   device_machieId  varchar(48) DEFAULT NULL,
+   device_name  varchar(48) DEFAULT NULL,
+   sender_machieId  varchar(48) DEFAULT NULL,
+   sender_userId  varchar(128) DEFAULT NULL,
+   domain_icon  varchar(256),
+   domain_name  varchar(128) DEFAULT NULL,
+   dt  date DEFAULT NULL)
+   interleaved sortkey (timestamp,type,os,senderId,orgId,entityId,domainId,deviceId);
+
+
+

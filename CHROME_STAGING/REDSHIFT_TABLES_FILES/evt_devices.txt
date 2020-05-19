@@ -1,0 +1,9 @@
+CREATE TABLE  chrome_staging.evt_devices  (
+   activeTime integer  NOT NULL,
+   inactiveTime  integer  NOT NULL,
+   timestamp_integer timestamp NOT NULL,
+   orgId  integer  DEFAULT NULL,
+   entityId  integer  DEFAULT NULL,
+   deviceId  integer  DEFAULT NULL,
+   dt  timestamp DEFAULT NULL)
+   interleaved sortkey (timestamp_integer,orgId,entityId,deviceId);

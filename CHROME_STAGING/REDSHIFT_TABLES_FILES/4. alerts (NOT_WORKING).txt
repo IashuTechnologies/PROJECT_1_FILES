@@ -1,0 +1,70 @@
+SCHEMA: chrome_staging 
+
+-----------------------------------------------------------------------------------------------
+
+MYSQL_QUERY
+-------------
+
+
+
+
+CREATE TABLE `alerts` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `userId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL COMMENT 'redundant column',
+  `optimalUsage` decimal(8,2) NOT NULL,
+  `category` enum('NONE','MODERATE','HIGH','ADMIN') DEFAULT NULL,
+  `type` enum('ABSOLUTE','PERCENTAGE') DEFAULT NULL,
+  `startDate` datetime DEFAULT NULL,
+  `endDate` datetime DEFAULT NULL,
+  `interval` varchar(255) NOT NULL,
+  `frequency` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `disabled` tinyint(1) DEFAULT '0',
+  `nextUpdate` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `alerts_name_index` (`name`(191)),
+  KEY `alerts_userid_index` (`userId`),
+  KEY `alerts_entityid_index` (`entityId`),
+  KEY `alerts_category_index` (`category`),
+  KEY `alerts_type_index` (`type`),
+  KEY `alerts_startdate_index` (`startDate`),
+  KEY `alerts_enddate_index` (`endDate`),
+  KEY `alerts_interval_index` (`interval`(191)),
+  KEY `alerts_disabled_index` (`disabled`),
+  KEY `nextUpdate` (`nextUpdate`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COMMENT='to store alerts based time or percetage of usage';
+
+
+-----------------------------------------------------------------------------------------------
+
+REDSHIFT_QUERY
+-------------
+
+
+
+CREATE TABLE  alerts  (
+   id  integer NOT NULL IDENTITY(1,1),
+   name  varchar(255) NOT NULL,
+   userId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL COMMENT 'redundant column',
+   optimalUsage  decimal(8,2) NOT NULL,
+   category  enum('NONE','MODERATE','HIGH','ADMIN') DEFAULT NULL,
+   type  enum('ABSOLUTE','PERCENTAGE') DEFAULT NULL,
+   startDate  timestamp DEFAULT NULL,
+   endDate  timestamp DEFAULT NULL,
+   integererval  varchar(255) NOT NULL,
+   frequency  integer DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+   disabled  INT2 DEFAULT '0',
+   nextUpdate  integer NOT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (name,userId,entityId,category,type,startDate,endDate,,integererval);
+
+
+
+
+-----------------------------------------------------------------------------------------

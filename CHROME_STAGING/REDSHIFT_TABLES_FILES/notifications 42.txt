@@ -1,0 +1,14 @@
+CREATE TABLE  chrome_staging.notifications  (
+   id  integer NOT NULL identity(1,1),
+   sent  int2 NOT NULL DEFAULT '0',
+   type  varchar(255) NOT NULL,
+   subject  varchar(256) NOT NULL,
+   to_redshift  varchar(25) NOT NULL,
+   template varchar(256) NOT NULL,
+   templateVars  varchar(256) NOT NULL,
+   timestamp_redshift  integer NOT NULL,
+   level  integer DEFAULT '-1',
+  PRIMARY KEY ( id ))
+  interleaved sortkey (type,timestamp_redshift,level,to_redshift);
+  
+

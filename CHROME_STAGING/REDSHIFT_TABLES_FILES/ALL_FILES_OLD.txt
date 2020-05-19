@@ -1,0 +1,242 @@
+SCHEMA: chrome_staging 
+
+-----------------------------------------------------------------------------------------------
+
+1. _logs
+
+---------------------------------------------
+
+MYSQL_QUERY
+-------------
+
+
+CREATE TABLE `_logs` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `timestamp` int(11) unsigned NOT NULL,
+  `userId` varchar(32) NOT NULL,
+  `clientVersion` varchar(32) NOT NULL,
+  `os` varchar(16) NOT NULL,
+  `orgId` varchar(16) DEFAULT NULL,
+  `entityId` varchar(16) DEFAULT NULL,
+  `macAddress` varchar(32) DEFAULT NULL,
+  `platformInfo` text,
+  `data` text,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `collectorId` varchar(8) NOT NULL,
+  `success` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `_logs_timestamp_index` (`timestamp`),
+  KEY `_logs_userid_index` (`userId`),
+  KEY `_logs_clientversion_index` (`clientVersion`),
+  KEY `_logs_os_index` (`os`),
+  KEY `_logs_orgid_index` (`orgId`),
+  KEY `_logs_entityid_index` (`entityId`),
+  KEY `_logs_macaddress_index` (`macAddress`),
+  KEY `_logs_collectorid_index` (`collectorId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+-----------------------------------------------------------------------------------
+
+REDSHIFT_QUERY
+
+---------------
+
+
+
+CREATE TABLE  _logs  (
+   id  integer not NULL IDENTITY(1,1),
+   timestamp  integer NOT NULL,
+   userId  varchar(32) NOT NULL,
+   clientVersion  varchar(32) NOT NULL,
+   os  varchar(16) NOT NULL,
+   orgId  varchar(16) DEFAULT NULL,
+   entityId  varchar(16) DEFAULT NULL,
+   macAddress  varchar(32) DEFAULT NULL,
+   platformInfo  varchar(256),
+   data  varchar(256),
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+   collectorId  varchar(8) NOT NULL,
+   success  INT2 DEFAULT '0',
+  PRIMARY KEY ( id ))
+  interleaved sortkey (timestamp,userId, clientVersion,os,orgId,entityId,macAddress,collectorId);
+  
+
+
+-----------------------------------------------------------------------------------------------
+
+
+2. _tmp_senders
+
+
+
+
+-----------------------------------------------------------------------------------------------
+
+MYSQL_QUERY
+-------------
+
+
+CREATE TABLE `_tmp_senders` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `firstName` varchar(50) DEFAULT NULL,
+  `lastName` varchar(50) DEFAULT NULL,
+  `entity` varchar(50) DEFAULT NULL,
+  `sessionId` varchar(80) DEFAULT NULL,
+  `senderId` varchar(50) DEFAULT NULL,
+  `userId` char(50) NOT NULL COMMENT 'to be renamed user_name',
+  `orgId` int(11) unsigned DEFAULT NULL COMMENT 'redundant column to be eliminated',
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `machineId` varchar(80) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `senders_orgid_index` (`orgId`),
+  KEY `senders_entityid_index` (`entityId`)
+) ENGINE=InnoDB AUTO_INCREMENT=6817238 DEFAULT CHARSET=utf8mb4;
+
+
+
+-----------------------------------------------------------------------------------------------
+
+REDSHIFT_QUERY
+-------------
+
+
+
+CREATE TABLE  _tmp_senders  (
+   id  integer not NULL IDENTITY(1,1),
+   firstName  varchar(50) DEFAULT NULL,
+   lastName  varchar(50) DEFAULT NULL,
+   entity  varchar(50) DEFAULT NULL,
+   sessionId  varchar(80) DEFAULT NULL,
+   senderId  varchar(50) DEFAULT NULL,
+   userId  char(50) NOT NULL,
+   orgId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL,
+   machineId  varchar(80) DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (orgId,entityId);
+
+
+
+----------------------------------------------------------------------------------------------------
+
+
+
+3. a_tmp
+
+------
+
+
+
+-----------------------------------------------------------------------------------------------
+
+MYSQL_QUERY
+-------------
+
+
+
+CREATE TABLE `a_tmp` (
+  `cache_event_id` int(11) NOT NULL AUTO_INCREMENT,
+  `sender_id` int(11) DEFAULT NULL,
+  `body` text,
+  PRIMARY KEY (`cache_event_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2728340 DEFAULT CHARSET=utf8;
+
+
+
+-----------------------------------------------------------------------------------------------
+
+REDSHIFT_QUERY
+-------------
+
+CREATE TABLE a_tmp (
+   cache_event_id integer NOT NULL IDENTITY(1,1),
+   sender_id integer DEFAULT NULL,
+   body varchar(256),
+  PRIMARY KEY (cache_event_id)
+  );
+
+--------------------------------------------------------------------------------------------------
+
+
+4. alerts
+
+-------------
+
+
+
+-----------------------------------------------------------------------------------------------
+
+MYSQL_QUERY
+-------------
+
+
+
+
+CREATE TABLE `alerts` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `userId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL COMMENT 'redundant column',
+  `optimalUsage` decimal(8,2) NOT NULL,
+  `category` enum('NONE','MODERATE','HIGH','ADMIN') DEFAULT NULL,
+  `type` enum('ABSOLUTE','PERCENTAGE') DEFAULT NULL,
+  `startDate` datetime DEFAULT NULL,
+  `endDate` datetime DEFAULT NULL,
+  `interval` varchar(255) NOT NULL,
+  `frequency` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `disabled` tinyint(1) DEFAULT '0',
+  `nextUpdate` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `alerts_name_index` (`name`(191)),
+  KEY `alerts_userid_index` (`userId`),
+  KEY `alerts_entityid_index` (`entityId`),
+  KEY `alerts_category_index` (`category`),
+  KEY `alerts_type_index` (`type`),
+  KEY `alerts_startdate_index` (`startDate`),
+  KEY `alerts_enddate_index` (`endDate`),
+  KEY `alerts_interval_index` (`interval`(191)),
+  KEY `alerts_disabled_index` (`disabled`),
+  KEY `nextUpdate` (`nextUpdate`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COMMENT='to store alerts based time or percetage of usage';
+
+
+-----------------------------------------------------------------------------------------------
+
+REDSHIFT_QUERY
+-------------
+
+
+
+CREATE TABLE  alerts  (
+   id  integer NOT NULL IDENTITY(1,1),
+   name  varchar(255) NOT NULL,
+   userId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL COMMENT 'redundant column',
+   optimalUsage  decimal(8,2) NOT NULL,
+   category  enum('NONE','MODERATE','HIGH','ADMIN') DEFAULT NULL,
+   type  enum('ABSOLUTE','PERCENTAGE') DEFAULT NULL,
+   startDate  timestamp DEFAULT NULL,
+   endDate  timestamp DEFAULT NULL,
+   integererval  varchar(255) NOT NULL,
+   frequency  integer DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+   disabled  INT2 DEFAULT '0',
+   nextUpdate  integer NOT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (name,userId,entityId,category,type,startDate,endDate,,integererval);
+
+
+
+
+-----------------------------------------------------------------------------------------
+
+
+
+

@@ -1,0 +1,1362 @@
+﻿SCHEMA: chrome_staging 
+
+-----------------------------------------------------------------------------------------------
+
+1. _logs
+
+---------------------------------------------
+
+MYSQL_QUERY
+-------------
+
+
+CREATE TABLE `_logs` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `timestamp` int(11) unsigned NOT NULL,
+  `userId` varchar(32) NOT NULL,
+  `clientVersion` varchar(32) NOT NULL,
+  `os` varchar(16) NOT NULL,
+  `orgId` varchar(16) DEFAULT NULL,
+  `entityId` varchar(16) DEFAULT NULL,
+  `macAddress` varchar(32) DEFAULT NULL,
+  `platformInfo` text,
+  `data` text,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `collectorId` varchar(8) NOT NULL,
+  `success` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `_logs_timestamp_index` (`timestamp`),
+  KEY `_logs_userid_index` (`userId`),
+  KEY `_logs_clientversion_index` (`clientVersion`),
+  KEY `_logs_os_index` (`os`),
+  KEY `_logs_orgid_index` (`orgId`),
+  KEY `_logs_entityid_index` (`entityId`),
+  KEY `_logs_macaddress_index` (`macAddress`),
+  KEY `_logs_collectorid_index` (`collectorId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+-----------------------------------------------------------------------------------
+
+REDSHIFT_QUERY
+
+---------------
+
+
+
+CREATE TABLE  _logs  (
+   id  integer not NULL IDENTITY(1,1),
+   timestamp  integer NOT NULL,
+   userId  varchar(32) NOT NULL,
+   clientVersion  varchar(32) NOT NULL,
+   os  varchar(16) NOT NULL,
+   orgId  varchar(16) DEFAULT NULL,
+   entityId  varchar(16) DEFAULT NULL,
+   macAddress  varchar(32) DEFAULT NULL,
+   platformInfo  varchar(256),
+   data  varchar(256),
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+   collectorId  varchar(8) NOT NULL,
+   success  INT2 DEFAULT '0',
+  PRIMARY KEY ( id ))
+  interleaved sortkey (timestamp,userId, clientVersion,os,orgId,entityId,macAddress,collectorId);
+  
+-------------------------------------------------------------------------------------------------------
+NOTE : COPY didn’t do because only column name is there no values in csv file
+---------------------------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------------
+
+
+2. _tmp_senders
+
+
+
+
+-----------------------------------------------------------------------------------------------
+
+MYSQL_QUERY
+-------------
+
+
+CREATE TABLE `_tmp_senders` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `firstName` varchar(50) DEFAULT NULL,
+  `lastName` varchar(50) DEFAULT NULL,
+  `entity` varchar(50) DEFAULT NULL,
+  `sessionId` varchar(80) DEFAULT NULL,
+  `senderId` varchar(50) DEFAULT NULL,
+  `userId` char(50) NOT NULL COMMENT 'to be renamed user_name',
+  `orgId` int(11) unsigned DEFAULT NULL COMMENT 'redundant column to be eliminated',
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `machineId` varchar(80) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `senders_orgid_index` (`orgId`),
+  KEY `senders_entityid_index` (`entityId`)
+) ENGINE=InnoDB AUTO_INCREMENT=6817238 DEFAULT CHARSET=utf8mb4;
+
+
+
+-----------------------------------------------------------------------------------------------
+
+REDSHIFT_QUERY
+-------------
+
+
+
+CREATE TABLE  _tmp_senders  (
+   id  integer not NULL IDENTITY(1,1),
+   firstName  varchar(50) DEFAULT NULL,
+   lastName  varchar(50) DEFAULT NULL,
+   entity  varchar(50) DEFAULT NULL,
+   sessionId  varchar(80) DEFAULT NULL,
+   senderId  varchar(50) DEFAULT NULL,
+   userId  char(50) NOT NULL,
+   orgId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL,
+   machineId  varchar(80) DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (orgId,entityId);
+
+-----------------------------------------------------------------------------------------------------------------
+NOTE : comment was not add in orgid entityid
+-----------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+
+
+
+3. a_tmp
+
+------
+
+
+
+-----------------------------------------------------------------------------------------------
+
+MYSQL_QUERY
+-------------
+
+
+
+CREATE TABLE `a_tmp` (
+  `cache_event_id` int(11) NOT NULL AUTO_INCREMENT,
+  `sender_id` int(11) DEFAULT NULL,
+  `body` text,
+  PRIMARY KEY (`cache_event_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2728340 DEFAULT CHARSET=utf8;
+
+
+
+-----------------------------------------------------------------------------------------------
+
+REDSHIFT_QUERY
+-------------
+
+CREATE TABLE a_tmp (
+   cache_event_id integer NOT NULL IDENTITY(1,1),
+   sender_id integer DEFAULT NULL,
+   body varchar(256),
+  PRIMARY KEY (cache_event_id)
+  );
+
+--------------------------------------------------------------------------------------------------
+
+
+4. alerts
+
+-------------
+
+
+
+-----------------------------------------------------------------------------------------------
+
+MYSQL_QUERY
+-------------
+
+
+
+
+CREATE TABLE `alerts` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `userId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL COMMENT 'redundant column',
+  `optimalUsage` decimal(8,2) NOT NULL,
+  `category` enum('NONE','MODERATE','HIGH','ADMIN') DEFAULT NULL,
+  `type` enum('ABSOLUTE','PERCENTAGE') DEFAULT NULL,
+  `startDate` datetime DEFAULT NULL,
+  `endDate` datetime DEFAULT NULL,
+  `interval` varchar(255) NOT NULL,
+  `frequency` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `disabled` tinyint(1) DEFAULT '0',
+  `nextUpdate` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `alerts_name_index` (`name`(191)),
+  KEY `alerts_userid_index` (`userId`),
+  KEY `alerts_entityid_index` (`entityId`),
+  KEY `alerts_category_index` (`category`),
+  KEY `alerts_type_index` (`type`),
+  KEY `alerts_startdate_index` (`startDate`),
+  KEY `alerts_enddate_index` (`endDate`),
+  KEY `alerts_interval_index` (`interval`(191)),
+  KEY `alerts_disabled_index` (`disabled`),
+  KEY `nextUpdate` (`nextUpdate`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COMMENT='to store alerts based time or percetage of usage';
+
+
+-----------------------------------------------------------------------------------------------
+
+REDSHIFT_QUERY
+-------------
+
+
+
+CREATE TABLE  alerts  (
+   id  integer NOT NULL IDENTITY(1,1),
+   name  varchar(255) NOT NULL,
+   userId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL COMMENT 'redundant column',
+   optimalUsage  decimal(8,2) NOT NULL,
+   category  enum('NONE','MODERATE','HIGH','ADMIN') DEFAULT NULL,
+   type  enum('ABSOLUTE','PERCENTAGE') DEFAULT NULL,
+   startDate  timestamp DEFAULT NULL,
+   endDate  timestamp DEFAULT NULL,
+   integererval  varchar(255) NOT NULL,
+   frequency  integer DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+   disabled  INT2 DEFAULT '0',
+   nextUpdate  integer NOT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (name,userId,entityId,category,type,startDate,endDate,,integererval);
+
+----------------------------------------------------------------------------------------------------
+NOTE : need to add indexes 8 added 2 more ,comment,enum
+------------------------------------------------------------------------------------------------
+
+
+-----------------------------------------------------------------------------------------
+
+5. app_events 
+
+
+---------------------------------------------
+
+MYSQL_QUERY
+---------------------------------------------
+
+CREATE TABLE `apps_events` (
+  `source` varchar(2048) NOT NULL,
+  `name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+---------------------------------------------
+
+REDSHIFT_QUERY
+---------------------------------------------
+
+CREATE TABLE apps_events (
+   source varchar(2048) NOT NULL,
+   name varchar(255) NOT NULL
+);
+-----------------------------------------------------------------------------------------------
+
+
+
+8. categories
+
+---------------------------------------------
+
+MYSQL_QUERY
+---------------------------------------------
+
+
+
+CREATE TABLE `categories` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `categories_name_index` (`name`(191))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+---------------------------------------------
+
+REDSHIFT_QUERY
+---------------------------------------------
+
+
+CREATE TABLE  categories  (
+   id  integer NOT NULL Identity(1,1),
+   name  varchar(255) NOT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  sortkey (name);  
+  
+  
+-----------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+9. client_entities
+
+---------------------------------------------
+
+MYSQL_QUERY
+---------------------------------------------
+
+
+
+CREATE TABLE `clients_entities` (
+  `clientId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  KEY `clients_entities_clientid_index` (`clientId`),
+  KEY `clients_entities_entityid_index` (`entityId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+---------------------------------------------
+
+REDSHIFT_QUERY
+---------------------------------------------
+
+
+CREATE TABLE  clients_entities  (
+   clientId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL)
+   interleaved sortkey (clientId,entityId); 
+ 
+  
+  
+-----------------------------------------------------------------------------------------------------
+
+
+
+
+21. ENT_GROUP
+
+---------------------------------------------
+
+MYSQL_QUERY
+---------------------------------------------
+
+CREATE TABLE `ent_group` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ent_group_entityId` (`entityId`),
+  KEY `ent_group_orgId` (`orgId`),
+  KEY `ent_group_name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=latin1;
+
+
+-----------------------------------------------------------------------------------
+
+REDSHIFT_QUERY
+
+------------------------------------------------------------------------------------
+
+CREATE TABLE  ent_group  (
+   id  integer  NOT NULL IDENTITY(1,1),
+   orgId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL,
+   name  varchar(255) NOT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (entityId, orgId,name);
+  
+-------------------------------------------------------------------------------------
+  
+  22. ENT_GROUP_DOMAINS
+
+--------------------------------------------
+
+MYSQL_QUERY
+-------------------------------------------------------
+
+CREATE TABLE `ent_group_domains` (
+  `orgId` int(11) DEFAULT NULL,
+  `entityId` int(11) DEFAULT NULL,
+  `domainId` int(11) DEFAULT NULL,
+  `groupId` int(11) DEFAULT NULL,
+  KEY `ent_group_domains_orgId` (`orgId`),
+  KEY `ent_group_domains_entityId` (`entityId`),
+  KEY `ent_group_domains_domainId` (`domainId`),
+  KEY `ent_group_domains_groupId` (`groupId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-----------------------------------------------------
+
+REDSHIFT_QUERY
+
+------------------------------------------------------------------------------------
+
+CREATE TABLE  ent_group_domains  (
+   orgId  integer  DEFAULT NULL,
+   entityId  integer  DEFAULT NULL,
+   domainId  integer  DEFAULT NULL,
+   groupId  integer  DEFAULT NULL)
+   interleaved sortkey (orgId,entityId,domainId,groupId);
+   
+
+-------------------------------------------------------
+
+23 . entities
+
+------------------------------------------------------------------
+  
+  MYSQL_QUERY
+
+-----------------------------------------------------
+
+CREATE TABLE `entities` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `displayName` char(255) DEFAULT NULL,
+  `address` text,
+  `phone` text,
+  `fax` text,
+  `website` text,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `parentId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `zipCode` varchar(5) DEFAULT NULL,
+  `stateCode` varchar(5) DEFAULT NULL,
+  `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `entities_name_index` (`name`(191)),
+  KEY `entities_orgid_index` (`orgId`),
+  KEY `entities_parentid_index` (`parentId`),
+  KEY `entities_zipcode_index` (`zipCode`),
+  KEY `entities_statecode_index` (`stateCode`)
+) ENGINE=InnoDB AUTO_INCREMENT=179 DEFAULT CHARSET=utf8mb4;
+
+-------------------------------------------------------
+
+REDSHIFT_QUERY
+
+------------------------------------------------------------------------------------
+
+CREATE TABLE  entities  (
+   id  integer NOT NULL IDENTITY(1,1),
+   name  varchar(255) NOT NULL,
+   displayName  varchar(255) DEFAULT NULL,
+   address varchar(256),
+   phone varchar(256),
+   fax varchar(256),
+   website varchar(256),
+   orgId  integer DEFAULT NULL,
+   parentId  integer DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+   zipCode  varchar(5) DEFAULT NULL,
+   stateCode  varchar(5) DEFAULT NULL,
+   created  timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (name,orgId,parentId,zipCode,stateCode);
+  
+  -------------------------------------------------------
+
+24 . ENTITIES_DOMAINS
+
+------------------------------------------------------------------
+  
+  MYSQL_QUERY
+
+-----------------------------------------------------
+
+CREATE TABLE `entities_domains` (
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `domainId` int(11) unsigned NOT NULL,
+  `defaultCategory` varchar(255) DEFAULT NULL,
+  `expiryDate` datetime DEFAULT NULL,
+  `isFavorite` tinyint(1) DEFAULT '0',
+  `label` varchar(255) DEFAULT NULL,
+  `description` text,
+  `category` enum('NONE','MODERATE','HIGH','ADMIN') DEFAULT NULL,
+  `numLicenses` int(11) DEFAULT NULL,
+  `annualCost` decimal(8,2) DEFAULT NULL,
+  `optimalUsage` decimal(8,2) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `categoryId` int(11) unsigned DEFAULT NULL,
+  `alias` varchar(255) DEFAULT NULL,
+  UNIQUE KEY `entities_domains_orgid_entityid_domainid_unique` (`orgId`,`entityId`,`domainId`),
+  KEY `entities_domains_orgid_index` (`orgId`),
+  KEY `entities_domains_entityid_index` (`entityId`),
+  KEY `entities_domains_domainid_index` (`domainId`),
+  KEY `entities_domains_isfavorite_index` (`isFavorite`),
+  KEY `entities_domains_label_index` (`label`(191)),
+  KEY `entities_domains_category_index` (`category`),
+  KEY `entities_domains_categoryid_index` (`categoryId`),
+  KEY `idx_numlicenses` (`numLicenses`),
+  KEY `idx_optimalusage` (`optimalUsage`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-------------------------------------------------------
+
+REDSHIFT_QUERY
+
+------------------------------------------------------------------------------------
+
+CREATE TABLE  entities_domains  (
+   orgId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL,
+   domainId  integer NOT NULL,
+   defaultCategory  varchar(255) DEFAULT NULL,
+   expiryDate timestamp DEFAULT NULL,
+   isFavorite INT2 DEFAULT '0',
+   label  varchar(255) DEFAULT NULL,
+   description varchar(256),
+   category varchar(256) DEFAULT NULL,
+   numLicenses  integer DEFAULT NULL,
+   annualCost  decimal(8,2) DEFAULT NULL,
+   optimalUsage  decimal(8,2) DEFAULT NULL,
+   created_at  timestamp NULL DEFAULT NULL,
+   updated_at  timestamp NULL DEFAULT NULL,
+   categoryId  integer DEFAULT NULL,
+   alias  varchar(255) DEFAULT NULL)
+   interleaved sortkey (orgId,entityId,domainId,isFavorite,label,category,categoryId,numLicenses);
+  
+  
+  
+  ======================================================================================================================
+ Note : 1 removed unique keys : UNIQUE KEY  entities_domains_orgid_entityid_domainid_unique  ( orgId , entityId , domainId ) 
+
+2 :  Remove last sortkey optimalUsage
+
+
+--------------------------------------------------------------------------------------------------------------------------
+
+
+25 . ENTITIES_TREE
+
+------------------------------------------------------------------
+  
+  MYSQL_QUERY
+
+-----------------------------------------------------
+
+CREATE TABLE `entities_tree` (
+  `entityId` int(11) DEFAULT NULL,
+  `childId` int(11) DEFAULT NULL,
+  `orgId` int(11) DEFAULT NULL,
+  KEY `comp_idx` (`orgId`,`entityId`,`childId`),
+  KEY `orgId` (`orgId`),
+  KEY `entityId` (`entityId`),
+  KEY `childId` (`childId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-----------------------------------------------------------------------------------
+
+REDSHIFT_QUERY
+
+------------------------------------------------------------------------------------
+
+CREATE TABLE  entities_tree  (
+   entityId  integer DEFAULT NULL,
+   childId  integer DEFAULT NULL,
+   orgId  integer DEFAULT NULL)
+   interleaved sortkey (orgId,entityId,childId);
+ 
+ ----------------------------------------------------------------------------
+ 
+ 
+ 26 . EVENTS
+
+------------------------------------------------------------------
+  
+  MYSQL_QUERY
+
+-----------------------------------------------------
+
+CREATE TABLE `events` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `source` varchar(2048) NOT NULL,
+  `activeTime` int(11) unsigned NOT NULL,
+  `inactiveTime` int(11) unsigned NOT NULL,
+  `_date` date DEFAULT NULL,
+  `timestamp` int(11) unsigned NOT NULL,
+  `type` enum('website','app') DEFAULT 'website',
+  `lifetime` text,
+  `clientVersion` varchar(255) DEFAULT NULL,
+  `os` char(8) DEFAULT NULL COMMENT 'change to CHAR(4)',
+  `platformInfo` text,
+  `senderId` int(11) unsigned NOT NULL,
+  `orgId` int(11) unsigned NOT NULL,
+  `entityId` int(11) unsigned NOT NULL,
+  `domainId` int(11) unsigned NOT NULL,
+  `deviceId` int(11) unsigned DEFAULT NULL,
+  `sync_batch_id` int(11) NOT NULL DEFAULT '0',
+  `src_hash` binary(20) DEFAULT NULL,
+  `collectorId` char(32) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `events_source_index` (`source`(191)),
+  KEY `events_type_index` (`type`),
+  KEY `events_os_index` (`os`),
+  KEY `events_senderid_index` (`senderId`),
+  KEY `events_orgid_index` (`orgId`),
+  KEY `events_entityid_index` (`entityId`),
+  KEY `events_domainid_index` (`domainId`),
+  KEY `events_deviceid_index` (`deviceId`),
+  KEY `index_name` (`timestamp`),
+  KEY `sync_batch_id` (`sync_batch_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=142218791 DEFAULT CHARSET=utf8mb4 COMMENT='Add id column';
+
+-----------------------------------------------------------------------------------
+
+REDSHIFT_QUERY
+
+------------------------------------------------------------------------------------
+
+CREATE TABLE  events  (
+   id  integer NOT NULL IDENTITY(1,1),
+   source  varchar(2048) NOT NULL,
+   activeTime  integer NOT NULL,
+   inactiveTime  integer NOT NULL,
+   _date  date DEFAULT NULL,
+   timestamp  integer NOT NULL,
+   type  varchar(256) DEFAULT 'website',
+   lifetime  varchar(256),
+   clientVersion  varchar(255) DEFAULT NULL,
+   os  char(8) DEFAULT NULL,
+   platformInfo  varchar(256),
+   senderId  integer NOT NULL,
+   orgId  integer NOT NULL,
+   entityId  integer NOT NULL,
+   domainId  integer NOT NULL,
+   deviceId  integer DEFAULT NULL,
+   sync_batch_id  integer NOT NULL DEFAULT '0',
+   src_hash  varchar(256) DEFAULT NULL,
+   collectorId  char(32) DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (source,type,os,senderId,orgId,entityId,domainId,deviceId);
+  
+  --------------------------------------------------------------------------------
+  
+  Note : short key left -- timestamp, sync_batch_id
+  
+  ---------------------------------------------------------------------------------
+
+
+27 . EVT_ALL
+
+------------------------------------------------------------------------------------
+  
+  MYSQL_QUERY
+
+-------------------------------------------------------------------------------------
+
+CREATE TABLE `evt_all` (
+  `activeTime` int(11) unsigned NOT NULL,
+  `inactiveTime` int(11) unsigned NOT NULL,
+  `timestamp` int(11) unsigned NOT NULL,
+  `type` enum('website','app') COLLATE utf8mb4_unicode_ci DEFAULT 'website',
+  `os` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `senderId` int(11) unsigned DEFAULT NULL,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `domainId` int(11) unsigned DEFAULT NULL,
+  `deviceId` int(11) unsigned DEFAULT NULL,
+  `device_machieId` varchar(48) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `device_name` varchar(48) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sender_machieId` varchar(48) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sender_userId` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `domain_icon` text COLLATE utf8mb4_unicode_ci,
+  `domain_name` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dt` date DEFAULT NULL,
+  KEY `evt_all_timestamp_index` (`timestamp`),
+  KEY `evt_all_type_index` (`type`),
+  KEY `evt_all_os_index` (`os`),
+  KEY `evt_all_senderid_index` (`senderId`),
+  KEY `evt_all_orgid_index` (`orgId`),
+  KEY `evt_all_entityid_index` (`entityId`),
+  KEY `evt_all_domainid_index` (`domainId`),
+  KEY `evt_all_deviceid_index` (`deviceId`),
+  KEY `evt_all_device_machieid_index` (`device_machieId`),
+  KEY `evt_all_device_name_index` (`device_name`),
+  KEY `evt_all_sender_machieid_index` (`sender_machieId`),
+  KEY `evt_all_sender_userid_index` (`sender_userId`),
+  KEY `evt_all_domain_name_index` (`domain_name`),
+  KEY `evt_all_dt_index` (`dt`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+----------------------------------------------------------------------------
+
+REDSHIFT_QUERY
+
+-----------------------------------------------------------------------------
+
+CREATE TABLE  evt_all  (
+   activeTime  integer NOT NULL,
+   inactiveTime  integer NOT NULL,
+   timestamp  integer NOT NULL,
+   type varchar(256) DEFAULT 'website',
+   os  varchar(32) NOT NULL,
+   senderId integer DEFAULT NULL,
+   orgId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL,
+   domainId  integer DEFAULT NULL,
+   deviceId  integer DEFAULT NULL,
+   device_machieId  varchar(48) DEFAULT NULL,
+   device_name  varchar(48) DEFAULT NULL,
+   sender_machieId  varchar(48) DEFAULT NULL,
+   sender_userId  varchar(128) DEFAULT NULL,
+   domain_icon  varchar(256),
+   domain_name  varchar(128) DEFAULT NULL,
+   dt  date DEFAULT NULL)
+   interleaved sortkey (timestamp,type,os,senderId,orgId,entityId,domainId,deviceId);
+   
+    
+   
+   Note 1: Some Short keys are left like : device_machieId,device_name,sender_machieId,sender_userId,domain_name
+   
+   
+   
+   -------------------------------------------------------------------------------------------------------
+   
+   
+   28 . evt_all_old
+
+------------------------------------------------------------------------------------
+  
+  MYSQL_QUERY
+
+-------------------------------------------------------------------------------------
+
+CREATE TABLE `evt_all_old` (
+  `activeTime` int(11) unsigned NOT NULL,
+  `inactiveTime` int(11) unsigned NOT NULL,
+  `timestamp` int(11) unsigned NOT NULL,
+  `type` enum('website','app') COLLATE utf8mb4_unicode_ci DEFAULT 'website',
+  `os` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `senderId` int(11) unsigned DEFAULT NULL,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `domainId` int(11) unsigned DEFAULT NULL,
+  `deviceId` int(11) unsigned DEFAULT NULL,
+  `device_machieId` varchar(48) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `device_name` varchar(48) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sender_machieId` varchar(48) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sender_userId` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `domain_icon` text COLLATE utf8mb4_unicode_ci,
+  `domain_name` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dt` date DEFAULT NULL,
+  KEY `evt_all_timestamp_index` (`timestamp`),
+  KEY `evt_all_type_index` (`type`),
+  KEY `evt_all_os_index` (`os`),
+  KEY `evt_all_senderid_index` (`senderId`),
+  KEY `evt_all_orgid_index` (`orgId`),
+  KEY `evt_all_entityid_index` (`entityId`),
+  KEY `evt_all_domainid_index` (`domainId`),
+  KEY `evt_all_deviceid_index` (`deviceId`),
+  KEY `evt_all_device_machieid_index` (`device_machieId`),
+  KEY `evt_all_device_name_index` (`device_name`),
+  KEY `evt_all_sender_machieid_index` (`sender_machieId`),
+  KEY `evt_all_sender_userid_index` (`sender_userId`),
+  KEY `evt_all_domain_name_index` (`domain_name`),
+  KEY `evt_all_dt_index` (`dt`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+---------------------------------------------------------------------------------------------
+
+
+REDSHIFT_QUERY
+
+---------------------------------------------------------------------------------------------
+
+
+CREATE TABLE  evt_all_old  (
+   activeTime  integer NOT NULL,
+   inactiveTime  integer NOT NULL,
+   timestamp  integer NOT NULL,
+   type varchar(256) DEFAULT 'website',
+   os  varchar(32) NOT NULL,
+   senderId  integer DEFAULT NULL,
+   orgId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL,
+   domainId  integer DEFAULT NULL,
+   deviceId  integer DEFAULT NULL,
+   device_machieId varchar(48) DEFAULT NULL,
+   device_name  varchar(48) DEFAULT NULL,
+   sender_machieId  varchar(48) DEFAULT NULL,
+   sender_userId  varchar(128) DEFAULT NULL,
+   domain_icon varchar(256),
+   domain_name  varchar(128) DEFAULT NULL,
+   dt  date DEFAULT NULL)
+   interleaved sortkey (timestamp,type,os,senderId,orgId,entityId,domainId,deviceId);
+   
+   -----------------------------------------------------------------------------------------------------------------
+   Note: Some Short keys are left like : device_machieId,device_name,sender_machieId,sender_userId,domain_name,dt
+   
+  ---------------------------------------------------------------------------------------------------------------------
+  
+  29 . evt_dates
+
+------------------------------------------------------------------------------------
+  
+  MYSQL_QUERY
+
+-------------------------------------------------------------------------------------
+
+CREATE TABLE `evt_dates` (
+  `dt` date NOT NULL,
+  `_ent` timestamp NULL DEFAULT NULL,
+  `_snd` timestamp NULL DEFAULT NULL,
+  `_os` timestamp NULL DEFAULT NULL,
+  `_all` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`dt`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+  
+---------------------------------------------------------------------------------------------
+
+
+REDSHIFT_QUERY
+
+---------------------------------------------------------------------------------------------
+
+CREATE TABLE  evt_dates  (
+   dt  date NOT NULL,
+   _ent  timestamp NULL DEFAULT NULL,
+   _snd  timestamp NULL DEFAULT NULL,
+   _os  timestamp NULL DEFAULT NULL,
+   _all  timestamp NULL DEFAULT NULL,
+  PRIMARY KEY ( dt ));
+  
+  
+---------------------------------------------------------------------------------------------------------------------
+  
+  30 . evt_devices
+
+------------------------------------------------------------------------------------
+  
+  MYSQL_QUERY
+
+-------------------------------------------------------------------------------------
+
+
+CREATE TABLE `evt_devices` (
+  `activeTime` int(11) unsigned NOT NULL,
+  `inactiveTime` int(11) unsigned NOT NULL,
+  `timestamp` int(11) unsigned NOT NULL,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `deviceId` int(11) unsigned DEFAULT NULL,
+  `dt` date DEFAULT NULL,
+  KEY `evt_devices_timestamp_index` (`timestamp`),
+  KEY `evt_devices_orgid_index` (`orgId`),
+  KEY `evt_devices_entityid_index` (`entityId`),
+  KEY `evt_devices_deviceid_index` (`deviceId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+---------------------------------------------------------------------------------------------
+
+
+REDSHIFT_QUERY
+
+---------------------------------------------------------------------------------------------
+
+CREATE TABLE  evt_devices  (
+   activeTime integer  NOT NULL,
+   inactiveTime  integer  NOT NULL,
+   timestamp  integer  NOT NULL,
+   orgId  integer  DEFAULT NULL,
+   entityId  integer  DEFAULT NULL,
+   deviceId  integer  DEFAULT NULL,
+   dt  date DEFAULT NULL)
+   interleaved sortkey (timestamp,orgId,entityId,deviceId);
+   
+   
+   
+   
+   
+----------------------------------------------------------------------------------------
+  
+  37 . GROUPS
+
+------------------------------------------------------------------------------------
+  
+  MYSQL_QUERY
+
+-------------------------------------------------------------------------------------
+
+
+CREATE TABLE `groups` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  `type` enum('user','sender') DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `groups_orgid_index` (`orgId`),
+  KEY `groups_type_index` (`type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+---------------------------------------------------------------------------------------------
+
+
+REDSHIFT_QUERY
+
+---------------------------------------------------------------------------------------------
+
+CREATE TABLE  groups  (
+   id  integer NOT NULL IDENTITY(1,1),
+   orgId  integer DEFAULT NULL,
+   deleted_at  timestamp DEFAULT NULL,
+   type varchar(256) DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (orgId,type);
+  
+  
+  ----------------------------------------------------------------------------------------
+  
+  38 . knex_migrations
+
+------------------------------------------------------------------------------------
+  
+  MYSQL_QUERY
+
+-------------------------------------------------------------------------------------
+
+CREATE TABLE `knex_migrations` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `batch` int(11) DEFAULT NULL,
+  `migration_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4;
+
+
+---------------------------------------------------------------------------------------------
+
+
+REDSHIFT_QUERY
+
+---------------------------------------------------------------------------------------------
+
+
+CREATE TABLE  knex_migrations  (
+   id  integer NOT NULL IDENTITY(1,1),
+   name  varchar(255) DEFAULT NULL,
+   batch  integer DEFAULT NULL,
+   migration_time  timestamp NULL DEFAULT NULL,
+  PRIMARY KEY ( id ));
+  
+
+
+-----------------------------------------------------------------------------------------------
+
+
+ 39 . knex_migrations_lock
+
+------------------------------------------------------------------------------------
+  
+  MYSQL_QUERY
+
+-------------------------------------------------------------------------------------
+
+CREATE TABLE `knex_migrations_lock` (
+  `is_locked` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+---------------------------------------------------------------------------------------------
+
+
+REDSHIFT_QUERY
+
+---------------------------------------------------------------------------------------------
+
+CREATE TABLE  knex_migrations_lock  (
+   is_locked  integer DEFAULT NULL);
+   
+   
+-----------------------------------------------------------------------------------------------
+
+
+ 40 . long_domains_ids
+
+------------------------------------------------------------------------------------
+  
+  MYSQL_QUERY
+
+-------------------------------------------------------------------------------------
+
+CREATE TABLE `long_domains_ids` (
+  `id` int(11) unsigned NOT NULL DEFAULT '0',
+  `name` varchar(255) CHARACTER SET utf8mb4 NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+---------------------------------------------------------------------------------------------
+
+
+REDSHIFT_QUERY
+
+---------------------------------------------------------------------------------------------
+
+CREATE TABLE  long_domains_ids  (
+   id  integer NOT NULL DEFAULT '0',
+   name  varchar(255) NOT NULL);
+
+
+-----------------------------------------------------------------------------------------------
+
+
+ 41. md_senders
+
+------------------------------------------------------------------------------------
+  
+  MYSQL_QUERY
+
+-------------------------------------------------------------------------------------
+
+CREATE TABLE `md_senders` (
+  `senderId` int(11) unsigned NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+---------------------------------------------------------------------------------------------
+
+
+REDSHIFT_QUERY
+
+---------------------------------------------------------------------------------------------
+
+
+CREATE TABLE  md_senders  (
+   senderId  integer  NOT NULL);
+   
+-----------------------------------------------------------------------------------------------
+
+
+
+
+ 42. Notification - ERROR
+
+------------------------------------------------------------------------------------
+  
+  MYSQL_QUERY
+
+-------------------------------------------------------------------------------------
+
+CREATE TABLE `notifications` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sent` tinyint(1) NOT NULL DEFAULT '0',
+  `type` varchar(255) NOT NULL,
+  `subject` text NOT NULL,
+  `to` varchar(255) NOT NULL,
+  `template` text NOT NULL,
+  `templateVars` text NOT NULL,
+  `timestamp` int(11) unsigned NOT NULL,
+  `level` int(8) DEFAULT '-1',
+  PRIMARY KEY (`id`),
+  KEY `notifications_type_index` (`type`(191)),
+  KEY `notifications_timestamp_index` (`timestamp`),
+  KEY `notifications_level_index` (`level`),
+  KEY `tio` (`to`(191))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+---------------------------------------------------------------------------------------------
+
+
+REDSHIFT_QUERY
+
+---------------------------------------------------------------------------------------------
+
+
+
+ 43. Organizations
+
+------------------------------------------------------------------------------------
+  
+  MYSQL_QUERY
+
+-------------------------------------------------------------------------------------
+
+CREATE TABLE `organizations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+---------------------------------------------------------------------------------------------
+
+
+REDSHIFT_QUERY
+
+---------------------------------------------------------------------------------------------
+
+CREATE TABLE organizations (
+  id integer NOT NULL IDENTITY(1,1),
+  name varchar(255) DEFAULT NULL,
+  createdAt timestamp NOT NULL,
+  updatedAt timestamp NOT NULL,
+  PRIMARY KEY (id));
+  
+  
+---------------------------------------------------------------------------------------------
+
+ 44. orgs
+
+------------------------------------------------------------------------------------
+  
+  MYSQL_QUERY
+
+-------------------------------------------------------------------------------------
+
+CREATE TABLE `orgs` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `orgId` varchar(32) NOT NULL COMMENT 'can we use Orgs.id instead? this would make it easier for users to remember their ID and simplify queries',
+  `address` varchar(512) DEFAULT NULL,
+  `phone` varchar(32) DEFAULT NULL,
+  `fax` varchar(32) DEFAULT NULL,
+  `website` text,
+  `live` varchar(2048) DEFAULT NULL,
+  `ownerId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  `logo` text,
+  `zipCode` varchar(5) DEFAULT NULL,
+  `stateCode` varchar(5) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `orgs_name_index` (`name`(191)) USING BTREE,
+  KEY `orgs_orgid_index` (`orgId`),
+  KEY `orgs_live_index` (`live`(191)),
+  KEY `orgs_ownerid_index` (`ownerId`),
+  KEY `orgs_zipcode_index` (`zipCode`),
+  KEY `orgs_statecode_index` (`stateCode`)
+) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8mb4;
+
+
+---------------------------------------------------------------------------------------------
+
+
+REDSHIFT_QUERY
+
+---------------------------------------------------------------------------------------------
+
+CREATE TABLE  orgs  (
+   id  integer NULL IDENTITY(1,1),
+   name  varchar(255) NOT NULL,
+   orgId  varchar(32) NOT NULL,
+   address  varchar(512) DEFAULT NULL,
+   phone  varchar(32) DEFAULT NULL,
+   fax  varchar(32) DEFAULT NULL,
+   website  varchar(256),
+   live  varchar(2048) DEFAULT NULL,
+   ownerId  integer DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+   deleted_at  timestamp DEFAULT NULL,
+   logo  varchar(256),
+   zipCode  varchar(5) DEFAULT NULL,
+   stateCode  varchar(5) DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (orgId,live,ownerId,zipCode,stateCode);
+  
+  
+  ---------------------------------------------------------------------------------------------
+
+ 45. orphan_events
+
+------------------------------------------------------------------------------------
+  
+  MYSQL_QUERY
+
+-------------------------------------------------------------------------------------
+
+CREATE TABLE `orphan_events` (
+  `timestamp` int(11) unsigned NOT NULL,
+  `activeTime` int(11) unsigned NOT NULL,
+  `inactiveTime` int(11) unsigned NOT NULL,
+  `source` varchar(2048) NOT NULL,
+  `src_hash` varbinary(20) DEFAULT NULL,
+  `type` enum('website','app') DEFAULT 'website',
+  `os` varchar(32) NOT NULL,
+  `collectorId` varchar(32) NOT NULL,
+  `platformInfo` text,
+  `lifetime` text,
+  `clientVersion` varchar(32) NOT NULL,
+  `orgId` varchar(32) NOT NULL,
+  `entityId` varchar(32) NOT NULL,
+  `senderId` varchar(80) NOT NULL,
+  `domainId` varchar(112) NOT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  KEY `orphan_events_timestamp_index` (`timestamp`),
+  KEY `orphan_events_source_index` (`source`(191)),
+  KEY `orphan_events_type_index` (`type`),
+  KEY `orphan_events_os_index` (`os`),
+  KEY `orphan_events_collectorid_index` (`collectorId`),
+  KEY `orphan_events_clientversion_index` (`clientVersion`),
+  KEY `orphan_events_orgid_index` (`orgId`),
+  KEY `orphan_events_entityid_index` (`entityId`),
+  KEY `orphan_events_senderid_index` (`senderId`),
+  KEY `orphan_events_domainid_index` (`domainId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+---------------------------------------------------------------------------------------------
+
+
+REDSHIFT_QUERY
+
+---------------------------------------------------------------------------------------------
+
+CREATE TABLE  orphan_events  (
+   timestamp  integer NOT NULL,
+   activeTime  integer NOT NULL,
+   inactiveTime  integer NOT NULL,
+   source  varchar(2048) NOT NULL,
+   src_hash  varcha(20) DEFAULT NULL,
+   type  varchar(256) DEFAULT 'website',
+   os  varchar(32) NOT NULL,
+   collectorId  varchar(32) NOT NULL,
+   platformInfo varchar(256),
+   lifetime  varchar(256),
+   clientVersion  varchar(32) NOT NULL,
+   orgId  varchar(32) NOT NULL,
+   entityId  varchar(32) NOT NULL,
+   senderId  varchar(80) NOT NULL,
+   domainId  varchar(112) NOT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL)
+   interleaved sortkey (timestamp,source,type,os,collectorId,clientVersion,orgId,entityId);
+   
+   
+   -----------------
+   
+   Note 1 : 2 Shortkey left ( senderId, domainId ) 
+   Note 2 : src_hash  varbinary(20) DEFAULT NULL, -----> Changed too varchar(20)
+   --------------------------
+
+---------------------------------------------------------------------------------------------
+
+ 46. Permission -- GOT ERROR---------
+
+
+---------------------------------------------------------------------------------------------
+
+ 47. roles
+
+------------------------------------------------------------------------------------
+  
+  MYSQL_QUERY
+
+-------------------------------------------------------------------------------------
+
+CREATE TABLE `roles` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `parentId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `createdAt` datetime DEFAULT NULL COMMENT 'redundant column to be eliminate',
+  `updatedAt` datetime DEFAULT NULL COMMENT 'redundant column to be eliminate',
+  PRIMARY KEY (`id`),
+  KEY `roles_name_index` (`name`(191)),
+  KEY `roles_orgid_index` (`orgId`),
+  KEY `roles_parentid_index` (`parentId`)
+) ENGINE=InnoDB AUTO_INCREMENT=212 DEFAULT CHARSET=utf8mb4;
+
+
+---------------------------------------------------------------------------------------------
+
+
+REDSHIFT_QUERY
+
+---------------------------------------------------------------------------------------------
+
+CREATE TABLE  roles  (
+   id  integer  NOT NULL IDENTITY(1,1),
+   name  varchar(255) NOT NULL,
+   orgId  integer DEFAULT NULL,
+   parentId  integer DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+   createdAt  timestamp DEFAULT NULL,
+   updatedAt  timestamp DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (name,orgId,parentId);
+  
+  ---------------------------------------------------------------------------------------------
+
+ 48. roles_permissions
+
+------------------------------------------------------------------------------------
+  
+  MYSQL_QUERY
+
+-------------------------------------------------------------------------------------
+
+CREATE TABLE `roles_permissions` (
+  `roleId` int(11) unsigned DEFAULT NULL,
+  `permissionId` int(11) unsigned DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  KEY `roles_permissions_roleid_index` (`roleId`),
+  KEY `roles_permissions_permissionid_index` (`permissionId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+---------------------------------------------------------------------------------------------
+
+
+REDSHIFT_QUERY
+
+---------------------------------------------------------------------------------------------
+
+CREATE TABLE  roles_permissions  (
+   roleId  integer  DEFAULT NULL,
+   permissionId  integer  DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL)
+   interleaved sortkey (roleId,permissionId);
+   
+   
+ --------------------------------------------------------------------------------------
+ 
+ 
+ 
+ error in tables -----------
+ 
+ 42,46,49 .. 
+

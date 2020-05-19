@@ -1,0 +1,6 @@
+CREATE TABLE a_tmp (
+   cache_event_id integer NOT NULL IDENTITY(1,1),
+   sender_id integer DEFAULT NULL,
+   body varchar(256),
+  PRIMARY KEY (cache_event_id)
+  );

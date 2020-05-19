@@ -1,0 +1,12 @@
+CREATE TABLE   chrome_staging.domains  (
+   id  integer NOT NULL Identity(1,1),
+   name  varchar(255) NOT NULL,
+   alias  varchar(255)  DEFAULT NULL,
+   type  varchar(255) DEFAULT 'website',
+   icon  varchar(65535),
+   paid  INT2 DEFAULT NULL,
+   default_category  varchar(255) DEFAULT NULL,
+   created_at  timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY ( id ))
+  sortkey (type);
+note: removed unsigned,collate,enum,uniquekey

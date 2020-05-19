@@ -1,0 +1,117 @@
+
+36. favourites   (NOT WORKING - ENUM)
+
+
+-----------------------------------------------------------------------------------------------
+
+MYSQL_QUERY
+-------------
+
+
+
+CREATE TABLE `favorites` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `url` varchar(80) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `label` varchar(32) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `description` text CHARACTER SET utf8mb4,
+  `expiryDate` datetime DEFAULT NULL,
+  `category` enum('NONE','MODERATE','HIGH','ADMIN') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `numLicenses` int(11) DEFAULT NULL,
+  `defaultCategory` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `optimalUsage` decimal(8,2) DEFAULT NULL,
+  `annualCost` decimal(8,2) DEFAULT NULL,
+  `entityId` int(11) unsigned DEFAULT NULL,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `domainId` int(11) unsigned DEFAULT NULL,
+  `in_sync` tinyint(1) DEFAULT '0',
+  `evt_fav_updated` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `is_enabled` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `entityId` (`entityId`,`domainId`),
+  KEY `favorites_url_index` (`url`),
+  KEY `favorites_category_index` (`category`),
+  KEY `favorites_entityid_index` (`entityId`),
+  KEY `favorites_orgid_index` (`orgId`),
+  KEY `favorites_domainid_index` (`domainId`),
+  KEY `favorites_label_index` (`label`),
+  KEY `favorites_in_sync_index` (`in_sync`)
+) ENGINE=InnoDB AUTO_INCREMENT=356 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-----------------------------------------------------------------------------------------------
+
+REDSHIFT_QUERY
+-------------
+CREATE TABLE  favorites  (
+   id  integer NOT NULL AUTO_INCREMENT,
+   url  varchar(80) CHARACTER SET utf8mb4 DEFAULT NULL,
+   label  varchar(32) CHARACTER SET utf8mb4 DEFAULT NULL,
+   description  varchar(256) CHARACTER SET utf8mb4,
+   expiryDate  timestamp DEFAULT NULL,
+   category  enum('NONE','MODERATE','HIGH','ADMIN') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+   numLicenses  integer DEFAULT NULL,
+   defaultCategory  varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+   optimalUsage  decimal(8,2) DEFAULT NULL,
+   annualCost  decimal(8,2) DEFAULT NULL,
+   entityId  integer DEFAULT NULL,
+   orgId  integer  DEFAULT NULL,
+   domainId  integer  DEFAULT NULL,
+   in_sync  INT2 DEFAULT '0',
+   evt_fav_updated  timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+   is_enabled  INT2 NOT NULL DEFAULT '0',
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+  PRIMARY KEY ( id )),
+  UNIQUE KEY  entityId  ( entityId , domainId ),
+  interleaved sortkey (url,category, entityId,orgId,domainId,label,in_sync);
+
+--------------------------------------------------------------------------------------------------------------
+
+
+
+37. groups   (NOT WORKING - ENUM)
+
+
+-----------------------------------------------------------------------------------------------
+
+MYSQL_QUERY
+-------------  
+
+
+
+CREATE TABLE `groups` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `orgId` int(11) unsigned DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
+  `type` enum('user','sender') DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `groups_orgid_index` (`orgId`),
+  KEY `groups_type_index` (`type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-----------------------------------------------------------------------------------------------
+
+REDSHIFT_QUERY
+-------------  
+
+
+
+CREATE TABLE  groups  (
+   id  integer NOT NULL IDENTITY(1,1),
+   orgId  integer DEFAULT NULL,
+   deleted_at  timestamp DEFAULT NULL,
+   type  enum('user','sender') DEFAULT NULL,
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (orgId,type);
+
+
+-----------------------------------------------------------------------------
+
+
+

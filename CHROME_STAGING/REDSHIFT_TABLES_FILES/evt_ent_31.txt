@@ -1,0 +1,14 @@
+CREATE TABLE  chrome_staging.evt_ent  (
+   id  integer NOT NULL IDENTITY(1,1),
+   activeTime  integer DEFAULT NULL,
+   inactiveTime  integer DEFAULT NULL,
+   timestamp_redshift  timestamp DEFAULT NULL,
+   orgId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL,
+   domainId  integer DEFAULT NULL,
+   dt timestamp DEFAULT NULL,
+   type  varchar(30) DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (entityId,domainId,dt,timestamp_redshift,orgId); 
+
+note : unsigned is removed 
