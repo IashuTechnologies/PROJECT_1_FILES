@@ -1,0 +1,34 @@
+In redshift procedure query, 
+
+1.client multiple tables are created in single procedure call.
+
+2.client multiple table values are inserted in single procedure call.
+
+MULTIPLE_TABLES ARE evt_ent, evt_devices.
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+chrome_staging.evt_ent count is 100000 but insert using procedure query, in public count is 542899.
+ 
+chrome_staging.evt_devices count is 100000 but insert using procedure query, in public count is 675714.
+
+Because of group by [or] we have to ask to customer whether more rows will defaultly added [or] this is our side eror.
+
+CHANGES:
+
+In redshift procedure query for evt_ent and evt_devices, we add all the columns except timestamp_redshift column because of error.
+
+In evt_devices they add in group by 3 columns which are not in that evt_devices and events tables. so that is removed in redshift procedure query.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+EXPORT USING CLI AND S3 COPY COMMAND IS DONE FOR 3 tables are events,evt_ent and evt_devices.
+
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+ISSUES IN TWO TABLES : evt_os and evt_snd.
+
+In evt_os table, 3 columns are _timestamp_old,dt,timestamp_redshift in that their values are randomly inserting between them. But other values are correctly inserted.
+
+as like same as evt_snd also happening.
+ 

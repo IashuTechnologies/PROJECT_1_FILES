@@ -1,0 +1,15 @@
+we have made some changes in the column name and datatype in chrome_staging schema for 5 tables.
+They are ,
+1.events [COLUMN : timestamp integer, CHANGED_COLUMN : timestamp_redshift timestamp]
+2.evt_devices [COLUMN : timestamp integer, CHANGED_COLUMN : timestamp_redshift timestamp]
+3.evt_ent [COLUMN : timestamp integer, CHANGED_COLUMN : timestamp_redshift timestamp]
+4.evt_os [COLUMN : _timestamp_old integer, CHANGED_COLUMN : _timestamp_old timestamp] AND [COLUMN : timestamp integer, CHANGED_COLUMN : timestamp_redshift timestamp]
+5.evt_snd [COLUMN : _timestamp_old integer, CHANGED_COLUMN : _timestamp_old timestamp] AND [COLUMN : timestamp integer, CHANGED_COLUMN : timestamp_redshift timestamp]
+
+REASON:
+FOR DATATYPE,
+1.In sync_events procedure query, you are inserting an value to "dt" column using timestamp column(convert timestamp_format to date_format) for all 4 tables(evt_devices,evt_ent,evt_os,evt_snd).
+2.In mysql, timestamp_format is integer(1544918400) in nature. But in redshift, it is date_time_format(2019-01-30 00:00:00.000000) in nature.
+3.we can convert from TIMESTAMP(redshift_format) to DATE(redshift_format) in redshift. But we cant convert TIMESTAMP(mysql_format) to DATE(redshift_format).
+FOR COLUMN_NAME,
+1. "timestamp","to" are RESERVED words in redshift. so we convert "timestamp" as "timestamp_redshift", "to" as "to_redshift".

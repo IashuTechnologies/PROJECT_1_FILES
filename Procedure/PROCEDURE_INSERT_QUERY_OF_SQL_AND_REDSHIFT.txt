@@ -1,0 +1,34 @@
+CLIENT_PROCEDURE_INSERT_STATEMENT_SQL
+-------------------------------------
+INSERT INTO evt_ent(
+			activeTime, inactiveTime, timestamp, orgId, entityId, domainId, type, dt
+		)
+		(
+			SELECT SUM(activeTime) AS activeTime,
+			SUM(inactiveTime) AS inactiveTime,
+			timestamp,
+			orgId, entityId, domainId, type,
+			date(from_unixtime(timestamp)) AS dt
+			FROM events
+			WHERE timestamp >= min_ts
+			GROUP BY entityId, domainId, dt
+            HAVING activeTime > 0
+		);
+===============================================================================================================
+CLIENT_PROCEDURE_INSERT_STATEMENT_REDSHIFT_CHANGED
+--------------------------------------------------
+INSERT INTO public.evt_ent(
+			activeTime, inactiveTime,timestamp_redshift, orgId, entityId, domainId, type, dt
+		)
+		(
+			SELECT SUM(activeTime) AS activeTime,
+			SUM(inactiveTime) AS inactiveTime,
+			timestamp_redshift,
+			orgId, entityId, domainId, type,
+			timestamp_redshift AS dt
+			FROM chrome_staging.events
+			WHERE timestamp_redshift >=0 
+			GROUP BY activeTime, inactiveTime,orgId, entityId, domainId, type, dt
+            HAVING activeTime > 0
+		);
+===============================================================================================================
