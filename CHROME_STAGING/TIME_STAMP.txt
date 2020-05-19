@@ -1,0 +1,6 @@
+for normal date and adatetime in mysql :
+
+timeformat 'yyyy-mm-dd hh:mi:ss';
+
+
+

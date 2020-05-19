@@ -1,0 +1,7 @@
+firstName|lastName|entity|sessionId|senderId|userId|orgId|entityId|machineId
+||west|31400|838977|user2@server.com|25|4|user2
+||school1|31400|838978|user3@server.com|25|119|user3
+||edtech|31400|838979|user4@server.com|25|43|user4
+||edtech|31400|838980|user5@server.com|25|43|2
+||west|31400|6816298|kostya@sender.com|25|4|2
+||edtech|31400||test4@sender.com|25|43|mach999

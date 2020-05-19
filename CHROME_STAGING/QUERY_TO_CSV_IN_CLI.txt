@@ -1,0 +1,16 @@
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+EXPORTING_SQL_QUERY_TO_CSV_FORMAT_IN_CLI_WITH_DOUBLE_QUOTES  :
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM _logs" --database=chrome_staging  
+| sed 's/\t/"|"/g;s/^/"/;s/$/"/;s/\n//g'
+ > 1.csv
+ 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+EXPORTING_SQL_QUERY_TO_CSV_FORMAT_IN_CLI_WITHOUT_DOUBLE_QUOTES  :
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM _logs" --database=chrome_staging 
+| sed -e 's/"//g' /home/ec2-user/csv_with_quotes/1.csv > _logs.csv
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

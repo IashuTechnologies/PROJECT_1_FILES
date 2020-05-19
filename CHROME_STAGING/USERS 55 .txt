@@ -1,0 +1,21 @@
+CREATE TABLE  chrome_staging.users  (
+   id  integer  NOT NULL identity(154,1),
+   username  varchar(255) NOT NULL,
+   email  varchar(255) NOT NULL,
+   orgId  integer  DEFAULT NULL,
+   entityId  integer  DEFAULT NULL,
+   roleId  integer  DEFAULT NULL,
+   firstName  varchar(255) DEFAULT NULL,
+   lastName  varchar(255) DEFAULT NULL,
+   avatar  varchar(256),
+   password  varchar(256) NOT NULL,
+   activated  int2 DEFAULT '1',
+   disabled  int2 DEFAULT '0',
+   setupComplete  int2 DEFAULT '1',
+   created_at  timestamp DEFAULT NULL,
+   updated_at  timestamp DEFAULT NULL,
+   deleted_at  timestamp DEFAULT NULL,
+   meta  varchar(512) DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (username,email,orgId,entityId,roleId,activated,disabled,setupComplete);
+  
