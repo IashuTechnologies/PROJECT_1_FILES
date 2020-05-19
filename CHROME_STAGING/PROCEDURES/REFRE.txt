@@ -1,0 +1,129 @@
+CREATE OR REPLACE PROCEDURE sample_return_cursor (cursor_out INOUT refcursor)
+AS $$
+BEGIN
+  OPEN cursor_out FOR SELECT * FROM public.favorites;
+END;
+$$ LANGUAGE plpgsql;
+
+---------------
+
+BEGIN;
+
+CALL sample_return_cursor ('newcursor');
+
+FETCH NEXT FROM newcursor;
+
+CLOSE newcursor;
+
+=====================================================================================================
+
+CREATE PROCEDURE sample_return_temp_table(tmp_table INOUT varchar(256)) as $$
+DECLARE
+  row record;
+BEGIN
+  EXECUTE 'drop table if exists ' || tmp_table;
+  EXECUTE 'create temp table ' || tmp_table || ' as select * from test_table1';
+END;
+$$ LANGUAGE plpgsql;
+
+
+---------------------
+
+CALL sample_return_temp_table('temp_table');
+
+======================================================================================
+
+CREATE OR REPLACE PROCEDURE test()
+AS $$
+BEGIN
+  SELECT 1 a;
+END;
+$$
+LANGUAGE plpgsql
+;
+/
+
+-----------------------
+
+call test();
+=======================================================================================
+
+CREATE OR REPLACE PROCEDURE test_sp1(f1 int, f2 varchar)
+AS $$
+BEGIN
+ insert into public.favorites
+(url, label, description, expirydate, category, numlicenses, defaultcategory, optimalusage,
+ annualcost, entityid, orgid, domainid, in_sync, evt_fav_updated, is_enabled, created_at, updated_at)
+values ('abcd', 'abcd', '', '', 'low', '', 'NULL', '42.00', '1200.00', '37', '1', '27', '1', '', '1', '', '');
+END;
+$$ LANGUAGE plpgsql;
+
+
+-----------------------------------------------------------
+
+CREATE OR REPLACE PROCEDURE test_sp3(f1 int, f2 varchar)
+AS $$
+BEGIN
+ insert into testing(id,name) values(1,'abcd');
+END;
+$$ LANGUAGE plpgsql;
+
+call test_sp1(5, 'abc');
+
+------------------------------------------------------
+
+
+
+CREATE OR REPLACE PROCEDURE test_sp3(f1 int, f2 varchar)
+AS $$
+BEGIN
+ insert into testing(id,name) values(f1,f2);
+END;
+$$ LANGUAGE plpgsql;
+
+call test_sp1(5, 'abc');
+
+----------------------------------------------------------------------
+
+
+
+
+=============================================================================================
+
+CREATE OR REPLACE PROCEDURE test_sp2(f1 IN int, f2 INOUT varchar(256), out_var OUT varchar(256))
+AS $$
+DECLARE
+  loop_var int;
+BEGIN
+  IF f1 is null OR f2 is null THEN
+    RAISE EXCEPTION 'input cannot be null';
+  END IF;
+  DROP TABLE if exists my_etl;
+  CREATE TEMP TABLE my_etl(a int, b varchar);
+    FOR loop_var IN 1..f1 LOOP
+        insert into my_etl values (loop_var, f2);
+        f2 := f2 || '+' || f2;
+    END LOOP;
+  SELECT INTO out_var count(*) from my_etl;
+END;
+$$ LANGUAGE plpgsql;
+
+
+call test_sp2(2,'2019');	
+===================================================================================
+
+insert into public.favorites
+(url, label, description, expirydate, category, numlicenses, defaultcategory, optimalusage, annualcost, entityid, orgid, domainid, in_sync, evt_fav_updated, is_enabled, created_at, updated_at)
+values ('abcd', 'abcd', '', '', 'low', '', 'NULL', '42.00', '1200.00', '37', '1', '27', '1', '2019-04-10 07:17:00.000000', '1', '', '');
+
+select count(id) from  favorites;
+164
+
+
+
+
+
+
+
+
+

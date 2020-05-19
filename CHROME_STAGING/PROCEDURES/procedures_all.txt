@@ -1,0 +1,655 @@
+chrome_staging
+stored  procedure
+
+Name(short):-
+
+ `_t_sync_events_org` 
+
+Name(Long) :-
+
+`chrome_staging`.`_t_sync_events_org`
+
+Create statement:-
+
+DELIMITER $$
+CREATE DEFINER=`chrome`@`%` PROCEDURE `_t_sync_events_org`(IN num_days INT, IN pOrgId INT)
+BEGIN
+  DECLARE min_ts INT;
+  SELECT CONCAT('Syncing events tables for # days: ',  num_days) __;
+  SET min_ts = UNIX_TIMESTAMP(CURRENT_DATE);
+
+  IF(num_days > 0) then
+    set min_ts = UNIX_TIMESTAMP() - (3600 * 24 * num_days);
+  end if;
+
+  DELETE FROM evt_ent     WHERE orgId = pOrgId AND timestamp >= min_ts;
+  DELETE FROM evt_snd     WHERE orgId = pOrgId AND timestamp >= min_ts;
+  DELETE FROM evt_os      WHERE orgId = pOrgId AND timestamp >= min_ts;
+  DELETE FROM evt_devices WHERE orgId = pOrgId AND timestamp >= min_ts;
+
+  INSERT INTO evt_ent(
+    activeTime, inactiveTime, timestamp, orgId, entityId, domainId, type, dt
+  )
+  (
+    SELECT SUM(activeTime) AS activeTime,
+    SUM(inactiveTime) AS inactiveTime,
+    timestamp,
+    orgId, entityId, domainId, type,
+    date(from_unixtime(timestamp)) AS dt
+    FROM events
+    WHERE orgId = pOrgId
+    AND timestamp >= min_ts
+    GROUP BY entityId, domainId, dt
+  );
+
+  INSERT INTO evt_snd(
+    activeTime, inactiveTime, timestamp, senderId, orgId, entityId, domainId, type, dt
+  )
+  (
+    SELECT SUM(activeTime) AS activeTime,
+    SUM(inactiveTime) AS inactiveTime,
+    timestamp, senderId,
+    orgId, entityId, domainId, type,
+    date(from_unixtime(timestamp)) AS dt
+    FROM events
+    WHERE orgId = pOrgId
+    AND timestamp >= min_ts
+    GROUP BY entityId, domainId, senderId, dt
+
+  );
+
+  INSERT INTO evt_os(activeTime, inactiveTime, timestamp, os, orgId, entityId, domainId,
+    dt) (
+    SELECT SUM(activeTime) AS activeTime,
+    SUM(inactiveTime) AS inactiveTime,
+    timestamp, os, 
+    orgId, entityId, domainId,
+    date(from_unixtime(timestamp)) AS dt
+    FROM events
+    WHERE orgId = pOrgId
+    AND timestamp >= min_ts
+    GROUP BY entityId, domainId, os, dt 
+  );
+  INSERT INTO evt_devices(activeTime, inactiveTime, timestamp, orgId, entityId, deviceId, dt) (
+    SELECT SUM(activeTime) AS activeTime,
+    SUM(inactiveTime) AS inactiveTime,
+    timestamp,
+    orgId, entityId, deviceId,
+    date(from_unixtime(timestamp)) AS dt
+    FROM events
+    WHERE orgId = pOrgId
+    AND timestamp >= min_ts
+    GROUP BY entityId, domainId, os, dt
+  );
+  CALL chrome_staging.sync_favorites_org(num_days, pOrgId);
+END$$
+DELIMITER ;
+
+Procedure call:-
+CALL `chrome_staging`.`_t_sync_events_org`(<{IN num_days INT}>, <{IN pOrgId INT}>);
+-------------------------------------------------------------------------------------------
+
+chrome_staging
+stored  procedure
+
+Name(short):-
+
+`build_entities_tree`
+
+Name(Long) :-
+
+`chrome_staging`.`build_entities_tree`
+
+Create statement:-
+
+DELIMITER $$
+CREATE DEFINER=`chrome`@`%` PROCEDURE `build_entities_tree`(in orgId_ int)
+BEGIN
+
+	DECLARE done BOOLEAN DEFAULT FALSE;
+	DECLARE _id INT UNSIGNED;
+	DECLARE _orgId INT UNSIGNED;
+	DECLARE cur CURSOR FOR SELECT id, orgId FROM entities WHERE orgId = orgId_;
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done := TRUE;
+	DECLARE exit HANDLER FOR SQLEXCEPTION
+	BEGIN
+		SET done := TRUE;
+		ROLLBACK;
+		SELECT 'ERRRRR';
+	END;
+	START TRANSACTION;
+
+	OPEN cur;
+
+	_loop: LOOP
+	FETCH cur INTO _id, _orgId;
+	IF done THEN
+		LEAVE _loop;
+	END IF;
+	DELETE FROM entities_tree WHERE entityId = _id;
+	CALL chrome_staging.build_entity_tree(_id, _orgId);
+END LOOP _loop;
+
+
+
+CLOSE cur;
+COMMIT;
+SELECT * FROM entities_tree;
+
+call z.log_run('build_entities_tree');
+
+END$$
+DELIMITER ;
+
+Procedure call:-
+
+CALL `chrome_staging`.`build_entities_tree`(<{in orgId_ int}>);
+--------------------------------------------------------------------------
+
+`build_entity_tree`
+`chrome_staging`.`build_entity_tree`
+DELIMITER $$
+CREATE DEFINER=`chrome`@`%` PROCEDURE `build_entity_tree`(in entityId_ INT, in orgId_ INT)
+BEGIN
+	INSERT INTO entities_tree(entityId, childId, orgId)
+	SELECT entityId_, id, orgId_ from entities
+	WHERE FIND_IN_SET(id, (
+			SELECT GROUP_CONCAT(Level SEPARATOR ',') FROM (
+				SELECT @Ids := (
+					SELECT GROUP_CONCAT(`id` SEPARATOR ',')
+					FROM `entities`
+					WHERE FIND_IN_SET(`parentId`, @Ids)
+				) Level
+				FROM `entities`
+				JOIN (SELECT @Ids := entityId_) temp1
+				WHERE FIND_IN_SET(`parentId`, @Ids)
+			) temp2
+	)) OR id = entityId_;
+
+call z.log_run('build_entity_tree');
+
+END$$
+DELIMITER ;
+CALL `chrome_staging`.`build_entity_tree`(<{in entityId_ INT}>, <{in orgId_ INT}>);
+
+-----------------------------------------------------------------------------------------------------
+
+`cache_data`
+`chrome_staging`.`cache_data`
+DELIMITER $$
+CREATE DEFINER=`chrome`@`%` PROCEDURE `cache_data`(_cache_event_id int(11), _source varchar(3000), _browser varchar(100), _icon varchar(2000), _type varchar(255), _active_time int(11), _inactive_time int(11))
+BEGIN
+
+DECLARE _proc VARCHAR(30) DEFAULT 'cache_data';
+declare _domain VARCHAR(255);
+declare did INT;
+declare oid INT;
+declare eid INT;
+
+DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
+BEGIN	GET DIAGNOSTICS CONDITION 1 @sqlst = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT; 
+CALL z.log_error (_proc,@sqlst,@errno,@text); RESIGNAL; END;
+
+if _source is not null then
+
+
+set _domain = (SELECT SubString_Index(SubString_Index(SubString_Index(SubString_Index(_source, '/', 3), '://', -1), '/', 1),'?', 1));
+set did = (SELECT id FROM chrome_staging.domains WHERE domains.`name` = _domain);
+if did is null then insert into chrome_staging.domains (`name`,icon,type) values (_domain,_icon,_type); select LAST_INSERT_ID() into did; end if;
+
+
+
+		SELECT
+			senders.orgId,
+			senders.entityId
+		INTO 
+			oid,
+			eid
+		FROM
+			chrome_staging.cache_event
+			INNER JOIN chrome_staging.senders ON senders.id = cache_event.sender_id
+		WHERE
+			cache_event.id = _cache_event_id;
+
+
+		if oid is not null and eid is not null then
+
+				INSERT IGNORE INTO chrome_staging.entities_domains (
+					orgId,
+					entityId,
+					domainId
+				) VALUES (oid, eid, did);
+
+		end if;
+
+
+
+		INSERT INTO chrome_staging.cache_data (
+			cache_event_id,
+			source,
+			domain_id,
+			browser,
+			icon,
+			type,
+			active_time,
+			inactive_time
+		)
+		VALUES
+			(
+			_cache_event_id,
+			_source,
+			did,
+			_browser,
+			_icon,
+			_type,
+			_active_time,
+			_inactive_time
+			);
+
+end if;
+
+
+
+END$$
+DELIMITER ;
+CALL `chrome_staging`.`cache_data`(<{_cache_event_id int(11)}>, <{_source varchar(3000)}>, <{_browser varchar(100)}>, <{_icon varchar(2000)}>, <{_type varchar(255)}>, <{_active_time int(11)}>, <{_inactive_time int(11)}>);
+--------------------------------------------------------------------------------------------------------------------------------------
+
+`cache_event`
+`chrome_staging`.`cache_event`
+DELIMITER $$
+CREATE DEFINER=`chrome`@`%` PROCEDURE `cache_event`(_user varchar(250), _org varchar(250), _entity varchar(250), _timestamp int(11), _mac_address varchar(17), _computer_name varchar(50), _domain_name varchar(255), _arch varchar(30), _nacl_arch varchar(30), _os varchar(30), _client_version varchar(30), _full_event TEXT)
+cache_event:BEGIN
+
+DECLARE _proc VARCHAR(30) DEFAULT 'cache_event';
+DECLARE sid INT;
+DECLARE oid INT;
+DECLARE etid INT;
+
+DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
+BEGIN	GET DIAGNOSTICS CONDITION 1 @sqlst = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT; 
+CALL z.log_error (_proc,@sqlst,@errno,@text); RESIGNAL; END;
+
+if _user is null or _user = '' then leave cache_event; end if;
+
+
+
+SET sid = (SELECT senders.id FROM chrome_staging.senders WHERE senders.userId = _user);
+
+IF sid IS NULL THEN
+
+	SELECT
+		orgs.id,
+		entities.id
+	INTO
+		oid,
+		etid
+	FROM
+		orgs
+		INNER JOIN entities ON entities.orgId = orgs.id
+	WHERE
+		orgs.orgId = _org AND
+		entities.name = _entity;
+
+		insert into chrome_staging.senders (userId, orgId, entityId, created_at)
+		values (_user,ifnull(oid, if( userId LIKE '%lausd.net',58,NULL)),    ifnull(etid, if( userId LIKE '%lausd.net',181,NULL)), _timestamp); 
+		select LAST_INSERT_ID() into sid;
+
+END IF;
+
+
+	INSERT INTO chrome_staging.cache_event (
+		`user`,
+		org,
+		entity,
+		sender_id,
+		`timestamp`,
+		_date,
+		_datehour,
+		mac_address,
+		computer_name,
+		domain_name,
+		arch,
+		nacl_arch,
+		os,
+		client_version,
+		full_event
+	)
+		VALUES 
+	(
+		_user,
+		_org,
+		_entity,
+		sid,
+		_timestamp,
+		DATE(FROM_UNIXTIME(_timestamp)),
+		UNIX_TIMESTAMP(DATE_FORMAT(FROM_UNIXTIME(_timestamp),'%Y-%m-%d %H:00:00')),
+		_mac_address,
+		_computer_name,
+		_domain_name,
+		_arch,
+		_nacl_arch,
+		_os,
+		_client_version,
+		_full_event
+	);
+
+	SELECT LAST_INSERT_ID() as cache_event_id;
+
+
+
+END$$
+DELIMITER ;
+CALL `chrome_staging`.`cache_event`(<{_user varchar(250)}>, <{_org varchar(250)}>, <{_entity varchar(250)}>, <{_timestamp int(11)}>, <{_mac_address varchar(17)}>, <{_computer_name varchar(50)}>, <{_domain_name varchar(255)}>, <{_arch varchar(30)}>, <{_nacl_arch varchar(30)}>, <{_os varchar(30)}>, <{_client_version varchar(30)}>, <{_full_event TEXT}>);
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+`chrome_staging.log_api_call`
+`chrome_staging`.`chrome_staging.log_api_call`DELIMITER $$
+CREATE DEFINER=`chrome`@`%` PROCEDURE `chrome_staging.log_api_call`(_user_id CHAR(50), _type CHAR(20), _source VARCHAR(5000), _icon VARCHAR(5000), _active_time INT(11), _inactive_time INT(11), _lifetime TEXT, _arch VARCHAR(12), _nacl_arch VARCHAR(12), _os VARCHAR (12), _client_version VARCHAR(255), _time_stamp INT, _macaddress VARCHAR(40))
+BEGIN
+
+
+IF _source != '' AND _source IS NOT NULL THEN 
+
+
+		INSERT INTO chrome_staging._cache_events (
+			userid,
+			type,
+			source,
+			icon,
+			activeTime,
+			inactiveTime,
+			lifeTime,
+			arch,
+			nacl_arch,
+			os,
+			clientVersion,
+			`timestamp`,
+			macaddress
+		)
+			VALUES
+		(
+			_user_id,
+			_type,
+			_source,
+			_icon,
+			_active_time,
+			_inactive_time,
+			_lifetime,
+			_arch,
+			_nacl_arch,
+			_os,
+			_client_version,
+			_time_stamp,
+			_macaddress
+		);
+
+
+END IF;
+
+
+
+
+
+
+END$$
+DELIMITER ;
+CALL `chrome_staging`.`chrome_staging.log_api_call`(<{_user_id CHAR(50)}>, <{_type CHAR(20)}>, <{_source VARCHAR(5000)}>, <{_icon VARCHAR(5000)}>, <{_active_time INT(11)}>, <{_inactive_time INT(11)}>, <{_lifetime TEXT}>, <{_arch VARCHAR(12)}>, <{_nacl_arch VARCHAR(12)}>, <{_os VARCHAR (12)}>, <{_client_version VARCHAR(255)}>, <{_time_stamp INT}>, <{_macaddress VARCHAR(40)}>);
+
+----------------------------------------------------------------------------------------------------------------------------
+
+`event_migrator`
+`chrome_staging`.`event_migrator`DELIMITER $$
+CREATE DEFINER=`chrome`@`%` PROCEDURE `event_migrator`()
+BEGIN
+
+declare _domain varchar(255);
+declare _icon varchar(5000);
+declare _user varchar(50);
+
+
+declare _id int;
+declare _source varchar(5000);
+declare _active_time int;
+declare _inactive_time int;
+declare _time_stamp int;
+declare _type CHAR(20);
+declare _lifetime TEXT;
+declare _client_version varchar(10);
+declare _arch varchar(12);
+declare _naclarch varchar(12);
+declare _os varchar(12);
+declare s_id int;
+declare o_id int;
+declare e_id int;
+declare d_id int;
+declare _macaddress varchar(23);
+declare _created_at DATETIME;
+declare _src_hash VARBINARY(20);
+
+
+DECLARE v_finished INTEGER DEFAULT 0;
+
+
+
+DECLARE cursor_name CURSOR FOR 
+
+		select
+			id,
+			userid,
+			source,
+			If(Left(chrome_staging._cache_events.source, 5) = 'http:', SubString_Index(SubString_Index(chrome_staging._cache_events.source,
+			'http:\/\/', -1), '\/', 1), If(Left(chrome_staging._cache_events.source, 5) = 'https',
+			SubString_Index(SubString_Index(chrome_staging._cache_events.source, 'https:\/\/', -1), '\/', 1),
+			If(Left(chrome_staging._cache_events.source, 5) != 'https' AND Left(chrome_staging._cache_events.source, 5) != 'http',
+			SubString_Index(chrome_staging._cache_events.source, '\/', 1), NULL))) as domain,
+			icon,
+			activeTime,
+			inactiveTime,
+			`timestamp`,
+			type,
+			lifetime,
+			clientVersion,
+			arch,
+			nacl_arch,
+			os,
+			macaddress,
+			created_at,
+			UNHEX(sha1(chrome_staging._cache_events.source)) as _src_hash
+		from
+			chrome_staging._cache_events
+		where isQueued = 1 ORDER BY id;
+
+
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_finished = 1;
+
+
+ CALL dev.log('03','event_migrator_cursor start');
+
+
+OPEN cursor_name;
+
+process_cache: LOOP
+
+FETCH cursor_name INTO 
+
+			_id,
+			_user,
+			_source,
+			_domain,
+			_icon,
+			_active_time,
+			_inactive_time,
+			_time_stamp,
+			_type,
+			_lifetime,
+			_client_version,
+			_arch,
+			_naclarch,
+			_os,
+			_macaddress,
+			_created_at,
+			_src_hash;
+
+
+IF v_finished = 1 THEN 
+
+  LEAVE process_cache;
+
+END IF;
+
+
+
+
+		SET d_id = (
+
+				SELECT
+					chrome_staging.domains.id
+				FROM
+					chrome_staging.domains
+				WHERE
+					chrome_staging.domains.`name` = _domain
+
+		);
+
+
+
+		IF d_id IS NULL THEN
+
+
+				INSERT INTO
+				 `chrome_staging`.`domains` (`name`,icon) VALUES (_domain,_icon);
+
+				SET d_id = (
+
+					SELECT
+						chrome_staging.domains.id
+					FROM
+						chrome_staging.domains
+					WHERE
+						chrome_staging.domains.`name` = _domain
+
+		);
+
+		END IF;
+
+
+
+
+
+				SELECT
+					chrome_staging.senders.id,
+					IF(Q.orgId = 36 AND Q.entityId = 0, 36,chrome_staging.senders.orgId),
+					IF(Q.orgId = 36 AND Q.entityId = 0, 0,chrome_staging.senders.entityId)
+				INTO
+					s_id,
+					o_id,
+					e_id
+				FROM
+					chrome_staging.senders
+					INNER JOIN (SELECT
+							chrome_staging.senders.id,
+							chrome_staging.senders.orgId,
+							chrome_staging.senders.entityId
+						FROM
+							chrome_staging.senders
+						WHERE
+							chrome_staging.senders.userId = _user) AS Q ON Q.id = chrome_staging.senders.id
+				WHERE
+					chrome_staging.senders.userId = _user;
+
+
+		IF s_id IS NULL THEN
+
+
+				INSERT INTO
+				 chrome_staging.senders (userId, orgId, entityId) VALUES (_user,36,0);
+
+				SELECT
+					chrome_staging.senders.id,
+					IF(Q.orgId = 36 AND Q.entityId = 0, 36,chrome_staging.senders.orgId),
+					IF(Q.orgId = 36 AND Q.entityId = 0, 0,chrome_staging.senders.entityId)
+				INTO
+					s_id,
+					o_id,
+					e_id
+				FROM
+					chrome_staging.senders
+					INNER JOIN (SELECT
+							chrome_staging.senders.id,
+							chrome_staging.senders.orgId,
+							chrome_staging.senders.entityId
+						FROM
+							chrome_staging.senders
+						WHERE
+							chrome_staging.senders.userId = _user) AS Q ON Q.id = chrome_staging.senders.id
+				WHERE
+					chrome_staging.senders.userId = _user;
+
+		END IF;
+
+
+
+		INSERT IGNORE INTO chrome_staging.`events` (
+
+			source,
+			activeTime,
+			inactiveTime,
+			`timestamp`,
+			type,
+			lifetime,
+			clientVersion,
+			arch,
+			nacl_arch,
+			os,
+			senderId,
+			orgId,
+			entityId,
+			domainId,
+			macaddress,
+			created_at,
+			src_hash
+
+		) SELECT
+
+			_source,
+			_active_time,
+			_inactive_time,
+			_time_stamp,
+			_type,
+			_lifetime,
+			_client_version,
+			_arch,
+			_naclarch,
+			_os,
+			 s_id,
+			 o_id,
+			 e_id,
+			 d_id,
+			_macaddress,
+			_created_at,
+			_src_hash
+		FROM
+			chrome_staging._cache_events
+		WHERE
+			chrome_staging._cache_events.id = _id;
+
+
+		DELETE FROM chrome_staging._cache_events WHERE chrome_staging._cache_events.id = _id;
+
+
+END LOOP process_cache;
+
+CLOSE cursor_name;
+
+call z.log_run('event_migrator');
+
+ CALL dev.log('04','event_migrator_finish');
+
+END$$
+DELIMITER ;
+CALL `chrome_staging`.`event_migrator`();
+
+--------------------------------------------------------------------------------------------------------------------------------
+

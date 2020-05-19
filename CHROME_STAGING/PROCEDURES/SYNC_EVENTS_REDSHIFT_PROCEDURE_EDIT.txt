@@ -1,0 +1,16 @@
+CREATE PROCEDURE sync_events(num_days IN int)
+AS $$
+BEGIN
+     SELECT CONCAT('Syncing events tables for # days: ',  num_days) __;
+     DECLARE min_ts int for SELECT extract(epoch from current_date);
+	
+
+
+END;
+$$ LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = chrome; 
+
+--------------------------------------------------------
+
+CALL sync_events(<{num_days IN int}>);

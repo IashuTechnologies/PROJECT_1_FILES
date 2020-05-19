@@ -1,0 +1,194 @@
+CREATE OR REPLACE PROCEDURE tests(f1 int, f2 varchar)
+AS $$
+BEGIN
+ insert into testing(id,name) values(1,'own_value');
+END;
+$$ LANGUAGE plpgsql;
+
+call tests(1, 'abc');
+------------------------------------------------------------------------
+
+CREATE OR REPLACE PROCEDURE tests1(f1 int, f2 varchar)
+AS $$
+BEGIN
+ insert into testing(id,name) values(f1,f2);
+END;
+$$ LANGUAGE plpgsql;
+
+call tests1(1, 'call_VALUE');
+
+--------------------------------------------------------------------------
+
+CREATE OR REPLACE PROCEDURE tests2(f1 int, f2 varchar)
+AS $$
+BEGIN
+ UPDATE testing SET id = 2 WHERE name=f2;
+END;
+$$ LANGUAGE plpgsql;
+
+call tests2(1, 'call_VALUE');
+
+
+
+----------------------------------------------------------------------------
+
+
+CREATE OR REPLACE PROCEDURE tests3(f1 int, f2 varchar, f3 varchar)
+AS $$
+BEGIN
+insert into testing(id,name) values(f1,f3);
+ UPDATE testing SET id = 1 WHERE name=f2;
+END;
+$$ LANGUAGE plpgsql;
+
+call tests3(3, 'call_VALUE','NEW_VALUE');
+
+----------------------------------------------------------------------------
+
+
+CREATE OR REPLACE PROCEDURE tests4(f1 int, f2 varchar,f3 int, f4 varchar,f5 int, f6 varchar)
+AS $$
+BEGIN
+ insert into testing(id,name) values(f1,f2);
+ insert into testing(id,name) values(f3,f4);
+ insert into testing(id,name) values(f5,f6);
+END;
+$$ LANGUAGE plpgsql;
+
+call tests4(4, 'first_couple_statement',5, 'first_couple_statement',6, 'first_couple_statement');
+
+----------------------------------------------------------------------------------------
+
+CREATE OR REPLACE PROCEDURE tests5(f1 int, f2 varchar)
+AS $$
+BEGIN
+ delete from testing where name=f2;
+END;
+$$ LANGUAGE plpgsql;
+
+call tests5(1, 'call_VALUE');
+
+---------------------------------------------------------------------------------------
+
+
+CREATE OR REPLACE PROCEDURE tests6(f1 varchar,f2 varchar)
+AS $$
+BEGIN
+ delete from testing where name=f2;
+ delete from testing where name=f1;
+
+END;
+$$ LANGUAGE plpgsql;
+
+call tests6('first_couple_statement', 'NEW_VALUE');
+
+
+
+
+-----------------------------------------------------------------------------------------
+
+
+CREATE OR REPLACE PROCEDURE tests7(f1 INOUT int, f2 INOUT varchar(256), f3 INOUT int, f4 INOUT varchar(256))
+AS $$
+BEGIN
+
+drop table if exists testing;
+create table testing(id int, name varchar(256));
+	
+if f1 is not null AND f3 is not null THEN 
+  insert into testing(id,name) values(f1,f2);
+  insert into testing(id,name) values(f3,f4);
+                                          
+
+ELSE 
+    RAISE EXCEPTION 'input cannot be null';
+END IF; 
+ 
+                                                                  
+END;
+$$ LANGUAGE plpgsql;
+
+
+call tests7(1,'s',2,'d');
+
+-------------------------------------------------------------------------------------------------------
+
+
+CREATE OR REPLACE PROCEDURE tests7()
+AS $$
+BEGIN
+ select * from testing;
+END;
+$$ LANGUAGE plpgsql;
+
+call tests7();
+
+---------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE PROCEDURE tests8 (param IN integer, rs_out INOUT refcursor)
+AS $$
+BEGIN
+  OPEN rs_out FOR SELECT * FROM testing;
+  COMMIT;
+END;
+$$ LANGUAGE plpgsql;
+
+BEGIN;
+BEGIN read write;
+
+call tests8(1,'mycursor');
+FETCH ALL FROM mycursor;
+
+COMMIT;
+
+---------------------------------------------------------------------------------------------
+
+CREATE PROCEDURE tests9()
+AS $$
+BEGIN
+ insert into testing1 select * from testing;
+END;
+$$ LANGUAGE plpgsql;
+
+call tests9();
+------------------------------------------------------------------------------------------------
+
+  ------------------
+CREATE PROCEDURE client1()
+AS $$
+BEGIN
+drop table if exists evt_ent;
+CREATE TABLE  public.evt_ent  (
+   id  integer NOT NULL IDENTITY(1,1),
+   activeTime  integer DEFAULT NULL,
+   inactiveTime  integer DEFAULT NULL,
+   timestamp  integer DEFAULT NULL,
+   orgId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL,
+   domainId  integer DEFAULT NULL,
+   dt timestamp DEFAULT NULL,
+   type  varchar(30) DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (entityId,domainId,dt,timestamp,orgId); 
+  
+  if exists public.evt_ent THEN
+INSERT INTO public.evt_ent(
+		activeTime, inactiveTime, timestamp, orgId, entityId, domainId, type, dt
+	)
+	(
+		SELECT SUM(activeTime) AS activeTime,
+		SUM(inactiveTime) AS inactiveTime,
+		timestamp,
+		orgId, entityId, domainId, type,
+		date(from_unixtime(timestamp)) AS dt
+		FROM chrome_staging.events
+		WHERE timestamp BETWEEN min_ts AND _now
+		GROUP BY entityId, domainId, dt
+        HAVING activeTime > 0
+	);
+END IF;  
+END;
+$$ LANGUAGE plpgsql;
+
+
+

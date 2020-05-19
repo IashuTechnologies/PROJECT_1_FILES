@@ -1,0 +1,42 @@
+SELECT * FROM TABLE_NAME:
+
+SELECT COUNT(*) FROM TABLE_NAME:
+
+INSERT INTO TABLE_NAME (COL1,COL2) VALUES(VALUE1,VALUE2);
+
+INSERT INTO table2 SELECT * FROM table1 WHERE condition;
+
+UPDATE TABLE COLUMN_NAME=VALUE WHERE COLUMN_NAME=VALUE;
+
+DROP TABLE TABLE_NAME:
+
+SELECT column_name AS alias_name FROM table_name;
+
+SELECT column_name FROM table_name WHERE condition 
+GROUP BY column_name;
+
+SELECT column_name FROM table_name WHERE condition 
+ORDER BY column_name;
+
+SELECT column_name FROM table_name WHERE condition 
+GROUP BY column_name 
+ORDER BY column_name;
+
+SELECT column_name FROM table_name WHERE condition 
+GROUP BY column_name 
+HAVING condition 
+ORDER BY column_name;
+
+
+TIMESTAMP TO DATE :
+    select trunc(sysdate);
+	
+DATE TO TIMESTAMP :
+	SELECT extract(epoch from current_date);
+	
+	
+
+
+
+
+

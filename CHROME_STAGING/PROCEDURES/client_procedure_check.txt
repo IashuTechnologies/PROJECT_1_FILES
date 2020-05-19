@@ -1,0 +1,72 @@
+CREATE PROCEDURE client_create()
+AS $$
+BEGIN
+drop table if exists public.evt_ent;
+CREATE TABLE  public.evt_ent  (
+   id  integer NOT NULL IDENTITY(1,1),
+   activeTime  integer DEFAULT NULL,
+   inactiveTime  integer DEFAULT NULL,
+   timestamp_redshift  integer DEFAULT NULL,
+   orgId  integer DEFAULT NULL,
+   entityId  integer DEFAULT NULL,
+   domainId  integer DEFAULT NULL,
+   dt timestamp DEFAULT NULL,
+   type  varchar(30) DEFAULT NULL,
+  PRIMARY KEY ( id ))
+  interleaved sortkey (entityId,domainId,dt,timestamp_redshift,orgId); 
+  
+END;
+$$ LANGUAGE plpgsql;
+
+call client_create();
+
+--------------------------------------------------------------------------------------------
+
+
+CREATE PROCEDURE client_insert()
+AS $$
+BEGIN
+
+SET min_ts = UNIX_TIMESTAMP(CURRENT_DATE);
+SET _now = UNIX_TIMESTAMP(CURRENT_DATE);
+
+INSERT INTO public.evt_ent(
+		activeTime, inactiveTime, timestamp_redshift, orgId, entityId, domainId, type, dt
+	)
+	(
+		SELECT SUM(activeTime) AS activeTime,
+		SUM(inactiveTime) AS inactiveTime,
+		timestamp_redshift,
+		orgId, entityId, domainId, type,
+		_date AS dt
+		FROM chrome_staging.events
+		
+		WHERE timestamp BETWEEN min_ts AND _now
+		GROUP BY activeTime,inactiveTime,entityId, domainId, dt,timestamp_redshift,orgId, entityId, domainId, type,_date
+        HAVING activeTime > 0
+	);  
+  
+END;
+$$ LANGUAGE plpgsql;
+
+call client_insert();
+
+--------------------------------------------------------p-----------------
+
+create procedure test123(num_days IN int)
+AS $$
+begin
+DECLARE min_ts INT;
+	DECLARE _now INT;
+	SELECT CONCAT('Syncing events tables for # days: ',  num_days) _;
+	SET min_ts = UNIX_TIMESTAMP(CURRENT_DATE);
+	SET _now = UNIX_TIMESTAMP(CURRENT_DATE);
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
+
+
+

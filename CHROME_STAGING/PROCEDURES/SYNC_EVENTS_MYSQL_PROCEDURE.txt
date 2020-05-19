@@ -1,0 +1,74 @@
+DELIMITER $$
+CREATE DEFINER=`chrome`@`%` PROCEDURE `sync_events`(IN `num_days` INT(4))
+BEGIN
+		DECLARE min_ts INT;
+		SELECT CONCAT('Syncing events tables for # days: ',  num_days) __;
+		SET min_ts = UNIX_TIMESTAMP(CURRENT_DATE);
+
+		IF(num_days > 0) then
+			set min_ts = UNIX_TIMESTAMP() - (3600 * 24 * num_days);
+		end if;
+
+		DELETE FROM evt_ent WHERE timestamp >= min_ts;
+		DELETE FROM evt_snd WHERE timestamp >= min_ts;
+		DELETE FROM evt_os WHERE timestamp >= min_ts;
+		DELETE FROM evt_devices WHERE timestamp >= min_ts;
+
+		INSERT INTO evt_ent(
+			activeTime, inactiveTime, timestamp, orgId, entityId, domainId, type, dt
+		)
+		(
+			SELECT SUM(activeTime) AS activeTime,
+			SUM(inactiveTime) AS inactiveTime,
+			timestamp,
+			orgId, entityId, domainId, type,
+			date(from_unixtime(timestamp)) AS dt
+			FROM events
+			WHERE timestamp >= min_ts
+			GROUP BY entityId, domainId, dt
+            HAVING activeTime > 0
+		);
+
+		INSERT IGNORE INTO evt_snd(
+			activeTime, inactiveTime, timestamp, senderId, orgId, entityId, domainId, type, dt
+		)
+		(
+			SELECT SUM(activeTime) AS activeTime,
+			SUM(inactiveTime) AS inactiveTime,
+			timestamp, senderId,
+			orgId, entityId, domainId, type,
+			date(from_unixtime(timestamp)) AS dt
+			FROM events
+			WHERE timestamp >= min_ts
+			GROUP BY entityId, domainId, senderId, dt
+            HAVING activeTime > 0
+		);
+
+		INSERT INTO evt_os(activeTime, inactiveTime, timestamp, os, collectorId, orgId, entityId, domainId, dt) (
+			SELECT SUM(activeTime) AS activeTime,
+			SUM(inactiveTime) AS inactiveTime,
+			timestamp, os, collectorId,
+			orgId, entityId, domainId,
+			date(from_unixtime(timestamp)) AS dt
+			FROM events
+			WHERE timestamp >= min_ts
+			GROUP BY entityId, domainId, os, dt, collectorId
+            HAVING activeTime > 0
+		);
+		INSERT INTO evt_devices(activeTime, inactiveTime, timestamp, orgId, entityId, deviceId, dt) (
+			SELECT SUM(activeTime) AS activeTime,
+			SUM(inactiveTime) AS inactiveTime,
+			timestamp,
+			orgId, entityId, deviceId,
+			date(from_unixtime(timestamp)) AS dt
+			FROM events
+			WHERE timestamp >= min_ts
+			GROUP BY entityId, domainId, os, dt, collectorId
+            HAVING activeTime > 0
+		);
+		#CALL sync_favorites(num_days);
+call sync_staging();
+call z.log_run('sync_events');
+
+END$$
+DELIMITER ;
