@@ -1,0 +1,14 @@
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM _logs" --database=chrome_staging  | sed 's/\t/"|"/g;s/^/"/;s/$/"/;s/\n//g'
+ > 1.csv
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM _logs" --database=chrome_staging | sed -e 's/"//g' /home/ec2-user/csv_with_quotes/1.csv > _logs.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM devices" --database=chrome_staging | sed -e 's/"//g' /home/ec2-user/csv_with_quotes/18.csv > devices.csv
+
+ aws s3 cp . s3://mysqltoredshiftmigration20.03/
+ 
+ aws s3 sync . s3://mysqltoredshiftmigration20.03/
+

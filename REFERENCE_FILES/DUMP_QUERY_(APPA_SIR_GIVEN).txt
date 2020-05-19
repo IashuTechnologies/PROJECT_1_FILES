@@ -1,0 +1,27 @@
+CREATE TABLE  _logs(
+id integer not NULL IDENTITY(1,1),
+timestamp integer not NULL,
+userId varchar(255) not NULL,
+clientVersion varchar(32) not NULL,
+os  varchar(16) not NULL,
+orgId  varchar(16) DEFAULT NULL,
+entityId  varchar(16) DEFAULT NULL,
+macAddress  varchar(32) DEFAULT NULL,
+platformInfo  varchar(256),
+data  varchar(256),
+created_at  timestamp DEFAULT NULL,
+updated_at  timestamp DEFAULT NULL,
+collectorId  varchar(8) not NULL,
+success  INT2 DEFAULT '0',
+data_hash  VARCHAR(20) DEFAULT NULL ,
+PRIMARY KEY ( id ))
+sortkey("time_stamp"),
+sortkey("userId"),
+sortkey("clientVersion"),
+sortkey("os"),
+sortkey("orgId"),
+sortkey("entityId"),
+sortkey("macAddress"),
+sortkey("collectorId"),
+sortkey("data_hash");
+

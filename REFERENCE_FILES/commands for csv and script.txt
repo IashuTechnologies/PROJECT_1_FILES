@@ -1,0 +1,86 @@
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM events Limit 1000000" --database=chrome_staging  
+| sed 's/\t/"|"/g;s/^/"/;s/$/"/;s/\n//g' > orphan_events_p.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM events Limit 1000000" --database=chrome_staging  
+| sed 's/\t/":"/g;s/^/"/;s/$/"/;s/\n//g' > orphan_events_c.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM events Limit 1000000" --database=chrome_staging  
+| sed 's/\t/";"/g;s/^/"/;s/$/"/;s/\n//g' > orphan_events_s.csv
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM events Limit 1000000" --database=chrome_staging
+| sed -e 's/"//g' /home/ec2-user/name/orphan_events_p.csv > events_p1.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM orphan_events Limit 1000000" --database=chrome_staging
+| sed -e 's/"//g' /home/ec2-user/name/orphan_events_s.csv > orphan_events_s1.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM orphan_events Limit 1000000" --database=chrome_staging
+| sed -e 's/"//g' /home/ec2-user/name/orphan_events_c.csv > orphan_events_c1.csv
+
+
+
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM events Limit 1000000" --database=chrome_staging 
+| sed -i -e 's/NULL//g' /home/ec2-user/client/events_p1.csv 
+
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM orphan_events Limit 1000000" --database=chrome_staging 
+| sed -i -e 's/NULL//g' /home/ec2-user/name/orphan_events_s1.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM orphan_events Limit 1000000" --database=chrome_staging 
+| sed -i -e 's/NULL//g' /home/ec2-user/name/orphan_events_c1.csv
+
+
+
+
+aws s3 cp orphan_events_p1.csv s3://mysqltoredshiftmigration20.03/delimiter/
+
+==================================================================================================================
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e  "select * FROM app_events" --database=chrome_staging  
+ | sed 's/\t/"|"/g;s/^/"/;s/$/"/;s/\n//g' > app_events.csv
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM apps_events" --database=chrome_staging 
+| sed -e 's/"//g' /home/ec2-user/test/app_events_t.csv > app_events_t1.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM apps_events" --database=chrome_staging 
+| sed -e 's/"//g' /home/ec2-user/test/apps_events_t1.csv > apps_events_t2.csv
+
+aws s3 cp apps_events_t2.csv s3://mysqltoredshiftmigration20.03/
+
+==================================================================================================
+
+#!/bin/bash
+
+RDSEndpoint="chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com"
+RDSUsername="chrome" ;
+RRDSPassword="PBdb2017!";
+RDSDabaseName="chrome_staging"
+AutomationDir="/home/ec2-user/automation"
+AWSS3BucketPath="s3://mysqltoredshiftmigration20.03/new"
+
+for TableName in $(cat $AutomationDir/tables/MysqlTableList.txt);
+do
+    echo "!!!!!!!!!!!!!!!!!!!! ${TableName} started the Export!!!!!!!!!!!!!" >>  $AutomationDir/Automation.log
+
+    MysqlCMD=`mysql -h $RDSEndpoint -u $RDSUsername -p$RRDSPassword -e "select * FROM $TableName Limit 20000000" --database=$RDSDabaseName | sed -e 's/\t/,/g'| awk '{sub(/[^,]*/,"");sub(/,/,"")} 1' > $AutomationDir/csvfiles/$TableName.csv`
+    #logs for RDS issuies
+	
+    echo $MysqlCMD >>  $AutomationDir/Automation.log
+
+    echo "!!!!!!!!!!!!!!!!!!!! ${TableName} Export Completed !!!!!!!!!!!!!" >>  $AutomationDir/Automation.log
+    #Upload Data to S3 Bucket
+    AWSS3Copy=`aws s3 cp $AutomationDir/csvfiles/$TableName.csv $AWSS3BucketPath/$TableName.csv`
+    #logs for AWS S3 Copy
+    echo $AWSS3Copy >>  $AutomationDir/Automation.log
+    echo "!!!!!!!!!!!!!!!!!!!! ${TableName} S3 Upload Completed !!!!!!!!!!!!!" >>  $AutomationDir/Automation.log
+	COPY _tmp_senders
+    from '$AWSS3BucketPath/$TableName.csv'
+    iam_role 'arn:aws:iam::615526901299:role/redshiftcopy'
+    delimiter '|' IGNOREHEADER 1;
+    #to delete the source file
+    rm -rf $AutomationDir/csvfiles/$TableName.csv
+     echo "!!!!!!!!!!!!!!!!!!!! ${TableName} deleted form source $AutomationDir/csvfiles/  Upload Completed !!!!!!!!!!!!!" >>  $AutomationDir/Automation.log
+done
+======================================================
+

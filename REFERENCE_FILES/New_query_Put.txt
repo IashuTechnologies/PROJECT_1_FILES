@@ -1,0 +1,56 @@
+#!/bin/bash
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM domains Limit 20000000" --database=chrome_staging  
+|  sed -e 's/\t/|/g'| awk '{sub(/[^|]*/,"");sub(/ /,"")} 1' > domains13.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM domains" --database=chrome_staging | sed -i -e 's/NULL//g' /home/ec2-user/myscript/domains.csv > tablealerts.csv
+
+aws s3 cp evt_os_final.csv s3://mysqltoredshiftmigration20.03/delimiter/
+
+cut -d| -f1 --complement domains.csv
+
+ 
+cut -d "|" -f1  --complement domains.csv > domains_final.csv
+
+cut -d "|" -f1  --complement entities_domains.csv > entities_domains_final.csv
+
+
+cut -d "|" -f1  --complement evt_os.csv > evt_os_final.csv
+
+
+cut -d "|" -f1  --complement long_domains_ids1.csv > long_domains_ids1_final.csv
+
+
+cut -d "|" -f1  --complement senders.csv > senders_final.csv
+
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM long_domains_ids" --database=chrome_staging  
+| sed 's/\t/":"/g;s/^/"/;s/$/"/;s/\n//g' > file66.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM long_domains_ids" --database=chrome_staging
+| sed -e 's/"//g' /home/ec2-user/testnull/filenew1.csv > long_domains_ids2.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM long_domains_ids" --database=chrome_staging 
+| sed -i -e 's/NULL//g' /home/ec2-user/testnull/long_domains_ids1.csv > tableldids.csv
+
+aws s3 cp long_domains_ids2.csv s3://mysqltoredshiftmigration20.03/delimiter/
+
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM evt_all Limit 1000000" --database=chrome_staging  
+| sed 's/\t/";"/g;s/^/"/;s/$/"/;s/\n//g' > file11.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM evt_all Limit 1000000" --database=chrome_staging
+| sed -e 's/"//g' /home/ec2-user/outm/file11.csv > evt_all.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM evt_all Limit 1000000" --database=chrome_staging 
+| sed -i -e 's/NULL//g' /home/ec2-user/outm/evt_all.csv
+
+cut -d "|" -f1  --complement evt_all.csv > evt_all_final.csv 
+
+aws s3 cp evt_all.csv s3://mysqltoredshiftmigration20.03/delimiter/
+
+
+
+
+
+

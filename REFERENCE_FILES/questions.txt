@@ -1,0 +1,21 @@
+1.  timestamp issue 
+
+      we changed date and datetime to timestamp which gives the date and time for future response.
+	  for u, if date only is required means we can change respective datatype??
+
+	  
+2. default issue  
+
+while exporting the data from aurora to redshift, the ingere type (which is given as default null) is make some datatype problem.
+we will put for integer datatype dafault is 0 or leave empty??
+
+3. enum issue 
+
+in enum part u are giving options or that we will foreign key constraint refernce table??
+
+
+4. auto_increment issue
+
+if we contious increment or random value increment for id's??
+	 
+	 

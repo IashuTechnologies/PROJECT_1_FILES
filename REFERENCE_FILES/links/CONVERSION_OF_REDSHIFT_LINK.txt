@@ -1,0 +1,21 @@
+AUTO_INCREMENT:
+
+https://stackoverflow.com/questions/29220956/redshift-psql-auto-increment-on-even-number
+
+
+TEXT(DATAYPE):
+
+https://stackoverflow.com/questions/30919389/redshift-equivalent-of-text-data-type
+
+
+NUMERIC_TYPES (DATATYPE):
+
+
+https://docs.aws.amazon.com/redshift/latest/dg/r_Numeric_types201.html
+
+
+FOR ALL_DATA_TYPES:
+
+https://www.flydata.com/resources/flydata-sync/data-type-mapping-mysql/
+
+https://www.flydata.com/blog/redshift-supported-data-types/

@@ -1,0 +1,23 @@
+
+service mysqld start
+
+chkconfig mysqld on
+sudo netstat -tlnp
+
+grep 'temporary password' /var/log/mysqld.log
+NZ,YW+a#Z2u?
+
+mysql -u root -p
+
+Inside mysql
+SET PASSWORD FOR 'root'@'localhost' = 'Test@123';
+
+mysqldump -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -u chrome -p chrome_staging  > /tmp/databasebackup/chrome_staging.sql
+
+mysql -u root -p chrome_staging  < /tmp/databasebackup/chrome_staging1.sql
+csv file
+mysqldump  -u root -p -T /tmp/databasebackup/ chrome_staging alerts  --fields-enclosed-by=\" --fields-terminated-by=, --fields-escaped-by=\"
+
+
+chrome
+Chrome12

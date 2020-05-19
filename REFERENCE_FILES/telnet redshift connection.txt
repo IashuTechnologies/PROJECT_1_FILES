@@ -1,0 +1,7 @@
+1.changed sg in redshift i.e client staging server private Ip,aurora mysql private ip
+  my ref
+  redshift---my ip 
+  ssh ----my ip 
+2.changed sg in my instance i.e redshift as my ip 
+
+telnet redshift-cluster-1.c2uciabko5eh.us-west-2.redshift.amazonaws.com 5439

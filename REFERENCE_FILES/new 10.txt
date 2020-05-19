@@ -1,0 +1,1 @@
+SELECT * FROM _logs INTO OUTFILE '/tmp/databasebackup/_logs.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';

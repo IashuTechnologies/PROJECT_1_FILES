@@ -1,0 +1,69 @@
+mysqldump -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -u chrome -p -t -T/tmp/databasebackup/logfile.csv chrome alerts --fields-terminated-by=','
+
+GRANT ALL PRIVILEGES ON chrome.* TO 'chrome'@'%' IDENTIFIED BY 'password';
+
+mysqldump --opt chrome > chrome.sql
+
+mysqldump -u chrome -p -P3306 chrome > /tmp/databasebackup
+sir gave 
+mysqldump -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -u chrome -p -T /tmp/databasebackup/ chrome_staging alerts  --fields-enclosed-by=\" --fields-terminated-by=, --fields-escaped-by=\"
+
+
+
+mysqldump -u chrome -p'PBdb2017!' chrome_staging > dump1.sql
+
+mysqldump -u chrome -p
+https://bobcares.com/blog/mysqldump-error-1045/
+worked comment:
+mysqldump -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -u chrome -p'PBdb2017!' chrome_staging alerts > dumpnew.csv
+
+mysqldump -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -u chrome -p chrome_staging alerts  --fields-enclosed-by=\" --fields-terminated-by=," --fields-escaped-by=\" > alerts.csv
+working comment:
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM alerts" --database=chrome_staging > tablealerts.csv
+working comment:
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM alerts" --database=chrome_staging  | sed 's/\t/","/g;s/^/"/;s/$/"/;s/\n//g'
+ > tablealerts.csv
+ 
+ aws s3 cp _tmp_senders.csv s3://mysqltoredshiftmigration20.03/
+ 
+ mysqldump -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -u chrome -p -T /tmp/databasebackup/ chrome_staging alerts  --fields-enclosed-by=\" --fields-terminated-by=, --fields-escaped-by=\"
+ 
+ 
+ mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "SELECT REPLACE(LTRIM(RTRIM(REPLACE(firstName, '"', ''))), '', '"') as firstName, REPLACE(LTRIM(RTRIM(REPLACE(lastName, '"', ''))), '', '"') as lastName, REPLACE(LTRIM(RTRIM(REPLACE(entity, '"', ''))), '', '"') as entity, REPLACE(LTRIM(RTRIM(REPLACE(sessionId, '"', ''))), '', '"') as sessionId, REPLACE(LTRIM(RTRIM(REPLACE(senderId, '"', ''))), '', '"') as senderId, REPLACE(LTRIM(RTRIM(REPLACE(userId, '"', ''))), '', '"') as userId, REPLACE(LTRIM(RTRIM(REPLACE(orgId, '"', ''))), '', '"') as orgId, REPLACE(LTRIM(RTRIM(REPLACE(entityId, '"', ''))), '', '"') as entityId, REPLACE(LTRIM(RTRIM(REPLACE(machineId, '"', ''))), '', '"') as machineId FROM _tmp_senders" --database=chrome_staging  |   sed 's/\t/"|"/g;s/^/"/;s/$/"/;s/\n//g' > new_senders.csv
+ 
+ 
+ mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "SELECT REPLACE(LTRIM(RTRIM(REPLACE(firstName, '"', ''))) FROM _tmp_senders" --database=chrome_staging  |   sed 's/\t/"|"/g;s/^/"/;s/$/"/;s/\n//g' > new_senders.csv
+ 
+  sed 's/\t/"|"/g;s/^/"/;s/$/"/;s/\n//g'
+  
+  sed 's/\t/"|"/g;s///;s/$//;s/\n//g'
+  
+  SELECT id, CONCAT('"', REPLACE(firstName, '"', '""'), '"'), float_column FROM _tmp_senders
+  
+ "id"|"firstName"|"lastName"|"entity"|"sessionId"|"senderId"|"userId"|"orgId"|"entityId"|"machineId"
+"6817232"|"NULL"|"NULL"|"west"|"31400"|"838977"|"user2@server.com"|"25"|"4"|"user2"
+"6817233"|"NULL"|"NULL"|"school1"|"31400"|"838978"|"user3@server.com"|"25"|"119"|"user3"
+"6817234"|"NULL"|"NULL"|"edtech"|"31400"|"838979"|"user4@server.com"|"25"|"43"|"user4"
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM alerts" --database=chrome_staging  | sed -e 's/\t/|/g' > tablealerts.csv
+
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM alerts" --database=chrome_staging  | sed -e 's/"//g' 2.csv > bbb.csv
+
+
+
+SELECT REPLACE(LTRIM(RTRIM(REPLACE(firstName, '"', ''))), '', '"') FROM TableName
+
+
+
+
+SELECT REPLACE(LTRIM(RTRIM(REPLACE(firstName, '"', ''))), '', '"') as firstName,
+ REPLACE(LTRIM(RTRIM(REPLACE(lastName, '"', ''))), '', '"') as lastName,
+ REPLACE(LTRIM(RTRIM(REPLACE(entity, '"', ''))), '', '"') as entity,
+ REPLACE(LTRIM(RTRIM(REPLACE(sessionId, '"', ''))), '', '"') as sessionId,
+ REPLACE(LTRIM(RTRIM(REPLACE(senderId, '"', ''))), '', '"') as senderId,
+ REPLACE(LTRIM(RTRIM(REPLACE(userId, '"', ''))), '', '"') as userId,
+ REPLACE(LTRIM(RTRIM(REPLACE(orgId, '"', ''))), '', '"') as orgId,
+ REPLACE(LTRIM(RTRIM(REPLACE(entityId, '"', ''))), '', '"') as entityId,
+ REPLACE(LTRIM(RTRIM(REPLACE(machineId, '"', ''))), '', '"') as machineId
+FROM _tmp_senders;

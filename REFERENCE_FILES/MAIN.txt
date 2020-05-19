@@ -1,0 +1,42 @@
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM evt_all_old Limit 1000000" --database=chrome_staging  
+| sed 's/\t/"|"/g;s/^/"/;s/$/"/;s/\n//g' > evt_all_old_p.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM evt_all_old Limit 1000000" --database=chrome_staging  
+| sed 's/\t/":"/g;s/^/"/;s/$/"/;s/\n//g' > evt_all_old_c.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM evt_all_old Limit 1000000" --database=chrome_staging  
+| sed 's/\t/";"/g;s/^/"/;s/$/"/;s/\n//g' > evt_all_old_s.csv
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM evt_all_old Limit 1000000" --database=chrome_staging
+| sed -e 's/"//g' /home/ec2-user/name/evt_all_old_p.csv > evt_all_old_p1.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM evt_all_old Limit 1000000" --database=chrome_staging
+| sed -e 's/"//g' /home/ec2-user/name/evt_all_old_s.csv > evt_all_old_s1.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM evt_all_old Limit 1000000" --database=chrome_staging
+| sed -e 's/"//g' /home/ec2-user/name/evt_all_old_c.csv > evt_all_old_c1.csv
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM evt_all_old Limit 1000000" --database=chrome_staging 
+| sed -i -e 's/NULL//g' /home/ec2-user/name/evt_all_old_p1.csv 
+
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM evt_all_old Limit 1000000" --database=chrome_staging 
+| sed -i -e 's/NULL//g' /home/ec2-user/name/evt_all_old_s1.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM evt_all_old Limit 1000000" --database=chrome_staging 
+| sed -i -e 's/NULL//g' /home/ec2-user/name/evt_all_old_c1.csv
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+aws s3 cp evt_all_old_p1.csv s3://mysqltoredshiftmigration20.03/delimiter/
+
+aws s3 cp evt_all_old_s1.csv s3://mysqltoredshiftmigration20.03/delimiter/
+
+aws s3 cp evt_all_old_c1.csv s3://mysqltoredshiftmigration20.03/delimiter/

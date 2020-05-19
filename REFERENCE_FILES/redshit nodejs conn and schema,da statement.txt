@@ -1,0 +1,48 @@
+Hi Ahmed,
+
+In our test server, Redshift connection is working. Here we have attached the nodejs code for the redshift connection.
+In EC2 instance
+Step-1: Install the package:
+             npm install node-redshift
+
+Step-2: Create nodejs file (vi nodejsfile.js) and put the below code
+
+var Redshift = require('node-redshift');
+var client = {
+  user:'chrome',
+  database:'dev',
+  password:'Chrome12',
+  port:'5439',
+  host:'redshift-cluster-1.c2uciabko5eh.us-west-2.redshift.amazonaws.com',
+};
+
+var redshiftClient = new Redshift(client);
+
+redshiftClient.query('select * from chrome_staging.alerts', {raw: true},function(err, data){
+  if(err) throw console.log("we are  in Error =============" + err);
+  else{
+   console.log("Alert table data below");
+    console.log(data);
+  }
+});
+
+ 
+ Step-3:Run the code 
+     node nodejsfile.js 
+
+Regards,
+Dhanushiya.
+Iashu Technologies.
+
+
+
+Hi Ahmed,
+In our test server, Redshift connection is working and we have sent the code to your Mail id (zangee3@gmail.com) through webmail.
+please check the code in your end and let us know.
+======================================================================
+
+CREATE DATABASE production  WITH  OWNER  chrome;
+
+create schema chrome_production AUTHORIZATION chrome;
+
+======================================================================================

@@ -1,0 +1,1 @@
+https://stackoverflow.com/questions/29220956/redshift-psql-auto-increment-on-even-number

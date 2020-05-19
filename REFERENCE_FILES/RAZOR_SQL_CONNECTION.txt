@@ -1,0 +1,18 @@
+Driver class :
+
+org.mariadb.jdbc.Driver
+
+
+Driver location :" 
+
+C:\Users\WELCOME\AppData\Local\Programs\RazorSQL\drivers\mariadb\mariadb-java-client.jar
+
+
+JDBC URL :
+
+
+jdbc:mysql://database-1.cdlm0stfamba.us-east-1.rds.amazonaws.com:3306/
+
+chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com
+
+jdbc:mysql://chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com:3306/

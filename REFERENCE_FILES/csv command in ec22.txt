@@ -1,0 +1,21 @@
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM evt_snd limit 1000000" --database=chrome_staging  | sed 's/\t/"|"/g;s/^/"/;s/$/"/;s/\n//g'
+ > evt_snd_main.csv
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e 
+"select * FROM evt_snd limit 1000000" --database=chrome_staging | sed -e 's/"//g' /home/ec2-user/new/evt_snd.csv > evt_snd1.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e 
+"select * FROM evt_snd" --database=chrome_staging | sed -e 's/"//g' /home/ec2-user/new/evt_snd1.csv > devices.csv
+
+ aws s3 cp evt_snd.csv s3://mysqltoredshiftmigration20.03/
+ 
+ aws s3 sync . s3://mysqltoredshiftmigration20.03/
+
+------------------------------------------------------------------------------------------------------------
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e 
+"select * FROM evt_snd" --database=chrome_staging  | sed -e 's/\t/|/g'| awk '{sub(/[^|]*/,"");sub(/|/,"")} 9' > evt_sndp.csv
+

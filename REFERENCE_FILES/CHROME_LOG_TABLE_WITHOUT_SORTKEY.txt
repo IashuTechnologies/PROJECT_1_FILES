@@ -1,0 +1,35 @@
+{
+  "Parameters": {
+    "NetworkStackParameter": {
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "WebServerInstance": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "InstanceType": "t2.micro",
+        "ImageId": "ami-a1b23456",
+        "NetworkInterfaces": [
+          {
+            "GroupSet": [
+              {
+                "Fn::ImportValue": {
+                  "Fn::Sub": "${NetworkStackParameter}-SecurityGroupID"
+                }
+              }
+            ],
+            "AssociatePublicIpAddress": "true",
+            "DeviceIndex": "0",
+            "DeleteOnTermination": "true",
+            "SubnetId": {
+              "Fn::ImportValue": {
+                "Fn::Sub": "${NetworkStackParameter}-SubnetID"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,91 @@
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM domains" --database=chrome_staging  
+| sed 's/\t/"|"/g;s/^/"/;s/$/"/;s/\n//g' > file.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM domains" --database=chrome_staging
+| sed -e 's/"//g' /home/ec2-user/csv_without_quotes/file.csv > domains.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM domains" --database=chrome_staging | sed -i -e 's/NULL//g' /home/ec2-user/testnull/domains.csv > tablealerts.csv
+
+aws s3 cp domains.csv s3://mysqltoredshiftmigration20.03/delimiter/
+
+
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM alerts" --database=chrome_staging  | sed -e 's/\t/,/g' | sed -i -e 's/NULL//g' > tablealerts.csv
+
+custom_reports
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM custom_reports" --database=chrome_staging  
+| sed 's/\t/"|"/g;s/^/"/;s/$/"/;s/\n//g' > file2.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM custom_reports" --database=chrome_staging
+| sed -e 's/"//g' /home/ec2-user/testnull/file2.csv > custom_reports.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM custom_reports" --database=chrome_staging | sed -i -e 's/NULL//g' /home/ec2-user/testnull/custom_reports.csv > tablecustom.csv
+
+entities_domains
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM entities_domains" --database=chrome_staging  
+| sed 's/\t/"|"/g;s/^/"/;s/$/"/;s/\n//g' > file3.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM entities_domains" --database=chrome_staging
+| sed -e 's/"//g' /home/ec2-user/testnull/file3.csv > entities_domains.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM entities_domains" --database=chrome_staging 
+| sed -i -e 's/NULL//g' /home/ec2-user/testnull/entities_domains.csv > tableendomain.csv
+
+aws s3 cp entities_domains.csv s3://mysqltoredshiftmigration20.03/delimiter/
+
+evt_devices
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM evt_devices" --database=chrome_staging  
+| sed 's/\t/"|"/g;s/^/"/;s/$/"/;s/\n//g' > file4.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM evt_devices" --database=chrome_staging
+| sed -e 's/"//g' /home/ec2-user/testnull/file4.csv > evt_devices.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM evt_devices" --database=chrome_staging 
+| sed -i -e 's/NULL//g' /home/ec2-user/testnull/evt_devices.csv > tableendevice.csv
+
+aws s3 cp evt_devices.csv s3://mysqltoredshiftmigration20.03/delimiter/
+
+
+evt_os
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM evt_os" --database=chrome_staging  
+| sed 's/\t/"|"/g;s/^/"/;s/$/"/;s/\n//g' > file5.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM evt_os" --database=chrome_staging
+| sed -e 's/"//g' /home/ec2-user/testnull/file5.csv > evt_os.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM evt_devices" --database=chrome_staging 
+| sed -i -e 's/NULL//g' /home/ec2-user/testnull/evt_os.csv > tableeos.csv
+
+aws s3 cp evt_os.csv s3://mysqltoredshiftmigration20.03/delimiter/
+
+long_domains_ids
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM long_domains_ids" --database=chrome_staging  
+| sed 's/\t/"|"/g;s/^/"/;s/$/"/;s/\n//g' > file66.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM long_domains_ids" --database=chrome_staging
+| sed -e 's/"//g' /home/ec2-user/testnull/file66.csv > long_domains_ids1.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM long_domains_ids" --database=chrome_staging 
+| sed -i -e 's/NULL//g' /home/ec2-user/testnull/long_domains_ids1.csv > tableldids.csv
+
+aws s3 cp long_domains_ids1.csv s3://mysqltoredshiftmigration20.03/delimiter/
+
+senders
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM senders" --database=chrome_staging  
+| sed 's/\t/"|"/g;s/^/"/;s/$/"/;s/\n//g' > file7.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM senders" --database=chrome_staging
+| sed -e 's/"//g' /home/ec2-user/testnull/file7.csv > senders.csv
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM senders" --database=chrome_staging 
+| sed -i -e 's/NULL//g' /home/ec2-user/testnull/senders.csv > tableldsenders.csv
+
+aws s3 cp senders.csv s3://mysqltoredshiftmigration20.03/delimiter/
+
+

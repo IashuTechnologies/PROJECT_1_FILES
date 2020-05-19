@@ -1,0 +1,10 @@
+mysqldump -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -u chrome -p -T /tmp/databasebackup/ chrome_staging alerts  --fields-enclosed-by=\" --fields-terminated-by=, --fields-escaped-by=\"
+
+--fields-enclosed-by=\" --fields-terminated-by=," --fields-escaped-by=\"
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM _logs" --database=chrome_staging --fields-enclosed-by=\" --fields-terminated-by=," --fields-escaped-by=\"
+ > table_logs.csv
+ 
+ | sed 's/\t/","/g;s/^/"/;s/$/"/;s/\n//g'
+ 
+ 

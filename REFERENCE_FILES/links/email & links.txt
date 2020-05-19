@@ -1,0 +1,5 @@
+https://docs.aws.amazon.com/redshift/latest/dg/r_userstable.html
+
+https://stackoverflow.com/questions/49609795/how-to-create-enum-in-redshift
+
+https://www.flydata.com/resources/flydata-sync/data-type-mapping-mysql/

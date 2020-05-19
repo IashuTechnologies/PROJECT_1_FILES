@@ -1,0 +1,17 @@
+module.exports = {
+	mysql: {
+		dbName: 'public',
+		host: 'redshift-cluster-1.cepph1aoae3s.us-east-1.redshift.amazonaws.com',
+		username: 'admin',
+		password: 'Devops12',
+		logging: false,
+		forceSync: false,
+		seed:      false,
+	},
+	auth: {
+		disable: false,
+		secret: '5fe29481687460fa24b545518650fe72633493f1',
+		expiry_minutes: (60 * 60 * 300),
+		expire_seconds: (60 * 60 * 300)
+	}
+};

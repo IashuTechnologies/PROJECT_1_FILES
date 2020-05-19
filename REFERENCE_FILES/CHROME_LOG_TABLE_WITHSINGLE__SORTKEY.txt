@@ -1,0 +1,7 @@
+CREATE TABLE city2 (
+  ID integer NOT NULL AUTO_INCREMENT,
+  Name varchar(35) NOT NULL DEFAULT '',
+  CountryCode varchar(3) NOT NULL DEFAULT '',
+  District varchar(20) NOT NULL DEFAULT '',
+  Population integer NOT NULL DEFAULT '0',
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
