@@ -1,0 +1,11 @@
+COPY chrome_staging.domains_tags
+from 's3://mysqltoredshiftmigration20.03/domains_tags.csv'
+iam_role 'arn:aws:iam::615526901299:role/redshiftcopy'
+delimiter '|' IGNOREHEADER 1;
+
+COPY chrome_staging.entities
+from 's3://mysqltoredshiftmigration20.03/entities1.csv'
+iam_role 'arn:aws:iam::615526901299:role/redshiftcopy'
+delimiter '|' IGNOREHEADER 1;
+
+
