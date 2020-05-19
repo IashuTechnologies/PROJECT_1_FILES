@@ -1,0 +1,41 @@
+1. create KINESIS (DATA STREAM)-----(event-pipe)
+
+2. create API GATEWAY (REST API)------(event-pipe)
+
+3. create IAM role
+    3.1 with API GATEWAY permisssion
+	3.2 with policy: apikinesisanalyticfullaccess-------(REFER Tutorial-api-gateway)
+
+4. go to API GATEWAY
+
+5. create resource-1 (with GET method)
+       5.1 integration request (fill the columns and save)
+       5.2 add HTTP request and mapping (REFER streams resource)   
+	   5.3 test the method.
+	   
+6. Again create resource-2 (with GET method)
+       6.1 integration request (fill the columns and save)
+       6.2 add HTTP request and mapping (REFER stream-name resource)   
+	   6.3 test the method.	   
+	   
+6. Again create resource-3 (with POST method and ENABLE api.cors)
+       6.1 integration request (fill the columns and save)
+       6.2 add HTTP request and mapping (REFER record resource)   
+	   6.3 test the method.	   	   
+	   
+7. create kinises firhose delevery stream (with event-pipe data stream details)   
+        7.1 create iam role s3 bucket delivery
+		
+8. deploy api and copy link 
+
+9. https://0omu3l3llk.execute-api.us-west-2.amazonaws.com/test
+   OUTPUT : {"message":"Missing Authentication Token"}
+   
+10. https://0omu3l3llk.execute-api.us-west-2.amazonaws.com/test/streams
+		OUTPUT : {"HasMoreStreams":false,"StreamNames":["event-pipe","mystream","yourstream"]}
+		
+11. https://0omu3l3llk.execute-api.us-west-2.amazonaws.com/test/streams/event-pipe
+          OUTPUT: {"StreamDescription": {"EncryptionType": "NONE", "EnhancedMonitoring": [{"ShardLevelMetrics": []}], "HasMoreShards": false, "RetentionPeriodHours": 24, "Shards": [{"HashKeyRange" :: {"EndingHashKey": "340282366920938463463374607431768211455", "StartingHashKey": "0"}, "SequenceNumberRange": {"StartingSequenceNumber": "496066230911724755798404331500009900009900009900009900008 arn: aws: kinesis: us-west-2: 615526901299: stream / event-pipe "," StreamCreationTimestamp ": 1.588416047E9," StreamName ":" event-pipe "," StreamStatus ":" ACTIVE "}}	
+		  
+12. PUT LINK IS NOT WORKING (ISSUE)		  
+		  

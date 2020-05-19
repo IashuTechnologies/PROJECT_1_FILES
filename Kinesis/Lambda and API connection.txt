@@ -1,0 +1,24 @@
+LAMBDA NAME : test1
+
+API GATEWAY NAME : petstore     /testing/hello
+
+
+{
+"min": "$input.params('min')",
+"max": "$input.params('max')"
+}
+
+'use strict'
+console.log('loading function')
+exports.handler = (event,context,callback) => {
+    let min =event.min; 
+    let max=event.max;
+    
+    let generatednumber= math.floor(math.random()*max)+ min;
+    
+    callback(null,generatednumber);
+};
+
+
+
+https://uwuq75pkca.execute-api.us-west-2.amazonaws.com/testing/hello?min=0&max=9
