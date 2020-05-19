@@ -1,0 +1,24 @@
+============================================================================================================================================
+WITHOUT_AUTO_INCREMENT
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select activeTime,inactiveTime,
+date(from_unixtime(_timestamp_old)) as _timestamp_old,senderId,orgId,entityId,domainId,dt,date(from_unixtime(_timestamp_old)) as timestamp,type FROM evt_snd Limit 1000000" --database=chrome_staging | sed 's/\t/"\t"/g;s/^/"/;s/$/"/;s/\n//g' >evt_snd_aws.csv
+
+======================================================================================================================================================
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select activeTime,inactiveTime,
+date(from_unixtime(_timestamp_old)) as _timestamp_old,senderId,orgId,entityId,domainId,dt,date(from_unixtime(_timestamp_old)) as timestamp,type FROM evt_snd Limit 1000000" --database=chrome_staging | sed -e 's/"//g' /home/ec2-user/evt_snd_aws.csv >evt_snd_aws_1.csv
+
+==============================================================================================================================================================
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select activeTime,inactiveTime,
+date(from_unixtime(_timestamp_old)) as _timestamp_old,senderId,orgId,entityId,domainId,dt,date(from_unixtime(_timestamp_old)) as timestamp,type FROM evt_snd Limit 1000000" --database=chrome_staging | sed -i -e 's/NULL//g' /home/ec2-user/evt_snd_test_1.csv
+
+=====================================================================================================================================================================================
+
+aws s3 cp evt_snd_new_1.csv s3://mysqltoredshiftmigration20.03/client/
+
+===================================================================================================
+cut -d"|" -f9 --complement evt_snd_test_1.csv > evt_snd_test_11.csv
+
+

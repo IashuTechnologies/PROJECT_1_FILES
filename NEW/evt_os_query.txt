@@ -1,0 +1,25 @@
+============================================================================================================================================
+WITHOUT_AUTO_INCREMENT
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select activeTime,inactiveTime,
+date(from_unixtime(_timestamp_old)) as _timestamp_old,os,orgId,entityId,
+domainId,dt,collectorId,date(from_unixtime(timestamp)) as timestamp FROM evt_os Limit 1000000" 
+--database=chrome_staging | sed 's/\t/"\t"/g;s/^/"/;s/$/"/;s/\n//g' >evt_os_test.csv
+
+======================================================================================================================================================
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select activeTime,inactiveTime,
+date(from_unixtime(_timestamp_old)) as _timestamp_old,os,orgId,entityId,
+domainId,dt,collectorId,date(from_unixtime(timestamp)) as timestamp FROM evt_os Limit 1000000"  --database=chrome_staging | sed -e 's/"//g' /home/ec2-user/evt_os_test.csv >evt_os_test_1.csv
+
+==============================================================================================================================================================
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select activeTime,inactiveTime,
+date(from_unixtime(_timestamp_old)) as _timestamp_old,os,orgId,entityId,
+domainId,dt,collectorId,date(from_unixtime(timestamp)) as timestamp FROM evt_os Limit 1000000" --database=chrome_staging | sed -i -e 's/NULL//g' /home/ec2-user/evt_os_test_1.csv
+
+=====================================================================================================================================================================================
+
+aws s3 cp evt_os_test_1.csv s3://mysqltoredshiftmigration20.03/client/
+
+

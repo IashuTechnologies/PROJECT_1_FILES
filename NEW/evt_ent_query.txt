@@ -1,0 +1,35 @@
+============================================================================================================================================
+WITHOUT_AUTO_INCREMENT
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select activeTime,inactiveTime,date(from_unixtime(timestamp)) as timestamp,orgId,entityId,domainId,
+dt,type FROM evt_ent Limit 1000000" --database=chrome_staging | sed 's/\t/"\t"/g;s/^/"/;s/$/"/;s/\n//g' >evt_ent_test.csv
+
+=============================================================================================================================================
+
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM events  Limit 1000000" --database=chrome_staging 
+| sed -e 's/\t/\t/g'| awk '{sub(/[^\t]*/,"");sub(/\t/,"")} 1' > events_new.csv
+
+
+==============================================================================================================================================
+WITH_AUTO_INCREMENT
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select activeTime,inactiveTime,date(from_unixtime(timestamp)) as timestamp,
+orgId,entityId,domainId,dt,type FROM evt_ent Limit 1000000" --database=chrome_staging | sed -e 's/\t/\t/g'| awk '{sub(/[^\t]*/,"");sub(/\t/,"")} 1' > events_wai1.csv
+
+
+======================================================================================================================================================
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select activeTime,inactiveTime,date(from_unixtime(timestamp)) as timestamp,orgId,entityId,domainId,
+dt,type FROM evt_ent Limit 1000000"  --database=chrome_staging | sed -e 's/"//g' /home/ec2-user/events_test.csv > evt_ent_test_1.csv
+
+==============================================================================================================================================================
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select activeTime,inactiveTime,date(from_unixtime(timestamp)) as timestamp,orgId,entityId,domainId,
+dt,type FROM evt_ent Limit 1000000" --database=chrome_staging | sed -i -e 's/NULL//g' /home/ec2-user/ evt_ent_test_1.csv
+
+=====================================================================================================================================================================================
+
+aws s3 cp evt_ent_test_1.csv s3://mysqltoredshiftmigration20.03/client/
+
+

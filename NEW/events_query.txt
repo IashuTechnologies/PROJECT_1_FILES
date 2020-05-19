@@ -1,0 +1,37 @@
+============================================================================================================================================
+WITHOUT_AUTO_INCREMENT
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select source,activeTime,inactiveTime,_date,date(from_unixtime(timestamp)) as timestamp,type,lifetime,clientVersion,os,platformInfo,senderId,orgId,entityId,domainId,deviceId,sync_batch_id,
+src_hash,collectorId,created_at,updated_at FROM events Limit 1000000" --database=chrome_staging | sed 's/\t/"\t"/g;s/^/"/;s/$/"/;s/\n//g' >events_test.csv
+
+=============================================================================================================================================
+
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select * FROM events  Limit 1000000" --database=chrome_staging 
+| sed -e 's/\t/\t/g'| awk '{sub(/[^\t]*/,"");sub(/\t/,"")} 1' > events_new.csv
+
+
+==============================================================================================================================================
+WITH_AUTO_INCREMENT
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e 
+"select source,activeTime,inactiveTime,_date,date(from_unixtime(timestamp)) as timestamp,type,lifetime,clientVersion,os,platformInfo,senderId,orgId,
+entityId,domainId,deviceId,sync_batch_id,src_hash,collectorId,created_at,updated_at FROM events  Limit 1000000" 
+--database=chrome_staging | sed -e 's/\t/\t/g'| awk '{sub(/[^\t]*/,"");sub(/\t/,"")} 1' > events_wai1.csv
+
+
+======================================================================================================================================================
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select source,activeTime,inactiveTime,_date,date(from_unixtime(timestamp)) as timestamp,type,lifetime,clientVersion,os,platformInfo,senderId,orgId,entityId,domainId,deviceId,sync_batch_id,
+src_hash,collectorId,created_at,updated_at FROM events  Limit 1000000"  --database=chrome_staging | sed -e 's/"//g' /home/ec2-user/events_test.csv > events_test_1.csv
+
+==============================================================================================================================================================
+
+mysql -h chrome-prod.cgog2o5onsgb.us-west-2.rds.amazonaws.com -uchrome -pPBdb2017! -e "select source,activeTime,inactiveTime,_date,date(from_unixtime(timestamp)) as timestamp,type,lifetime,clientVersion,os,platformInfo,senderId,orgId,entityId,domainId,deviceId,sync_batch_id,
+src_hash,collectorId,created_at,updated_at FROM events  Limit 1000000" --database=chrome_staging | sed -i -e 's/NULL//g' /home/ec2-user/ events_test_1.csv
+
+=====================================================================================================================================================================================
+
+aws s3 cp events_test_1.csv s3://mysqltoredshiftmigration20.03/client/
+
+
