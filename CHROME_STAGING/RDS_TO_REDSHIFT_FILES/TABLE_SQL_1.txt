@@ -1,0 +1,14 @@
+CREATE TABLE projects (
+    project_id integer,
+    name varchar(255),
+    start_date DATE,
+end_date DATE);
+
+
+
+CREATE TABLE sync (
+App_Transaction_Id INTEGER,
+Internal_Member_Id INTEGER,
+Location_External_Reference VARCHAR(20),
+Transaction_Type_Id INTEGER,
+Transaction_Timestamp INTEGER)

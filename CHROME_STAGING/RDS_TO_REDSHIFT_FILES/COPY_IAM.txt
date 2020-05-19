@@ -1,0 +1,29 @@
+COPY public.projects
+from 's3://forredshiftbuc/projects.csv'
+iam_role 'arn:aws:iam::732928366374:role/Myredshiftrole';
+
+
+copy projects from 's3://mybucket/venue'
+iam_role 'arn:aws:iam::732928366374:role/Myredshiftrole'
+delimiter '|';
+
+
+COPY projects
+from 's3://forredshiftbuc/sync.csv'
+iam_role 'arn:aws:iam::732928366374:role/Myredshiftrole'
+delimiter '|' IGNOREHEADER 1 ;
+
+COPY TABLE_TEST1
+from 's3://forredshiftbuc/TABLE_TEST1.csv'
+iam_role 'arn:aws:iam::732928366374:role/Myredshiftrole'
+delimiter '|' IGNOREHEADER 1;
+
+COPY TABLE_TEST2
+from 's3://forredshiftbuc/TABLE_TEST2.csv'
+iam_role 'arn:aws:iam::732928366374:role/Myredshiftrole'
+delimiter '|' IGNOREHEADER 1;
+
+COPY city2
+from 's3://forredshiftbuc/worldcity.csv'
+iam_role 'arn:aws:iam::732928366374:role/Myredshiftrole'
+delimiter '|' IGNOREHEADER 1;

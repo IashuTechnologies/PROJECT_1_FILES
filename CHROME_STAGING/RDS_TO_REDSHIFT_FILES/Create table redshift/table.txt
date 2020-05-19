@@ -1,0 +1,20 @@
+CREATE TABLE city1 (
+  ID integer,
+  Name varchar(200),
+  CountryCode varchar(20),
+  District varchar(100),
+  population integer
+);
+
+
+CREATE table aurora1 ( sno integer,name varchar(25),subject(30) );
+
+
+
+INSERT INTO aurora1 (sno,name,subject) VALUES (1,'dhanu','english');
+
+INSERT INTO aurora1 (sno,name,subject) VALUES ('2','dhansika''tamil');
+
+INSERT INTO aurora1 (sno,name,subject) VALUES ('3','teenu''hindi');
+
+INSERT INTO aurora1 (sno,name,subject) VALUES ('4','regan''kanada');

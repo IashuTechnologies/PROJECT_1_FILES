@@ -1,0 +1,18 @@
+CREATE TABLE projects (
+    project_id integer,
+    name varchar(255),
+    start_date DATE,
+end_date DATE);
+
+
+CREATE table TABLE_TEST ( project_id integer,name varchar(25) );
+
+
+
+INSERT INTO TABLE_TEST (project_id,name) VALUES ('1','english');
+
+INSERT INTO TABLE_TEST (project_id,name) VALUES ('2','tamil');
+
+INSERT INTO TABLE_TEST (project_id,name) VALUES ('3','hindi');
+
+INSERT INTO TABLE_TEST (project_id,name) VALUES ('1','kanada');

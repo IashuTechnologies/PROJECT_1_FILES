@@ -1,0 +1,47 @@
+CREATE TABLE projects (
+    project_id integer,
+    name varchar(255),
+    start_date DATE,
+end_date DATE);
+
+
+COPY projects
+from 's3://forredshiftbuc/sync.csv'
+iam_role 'arn:aws:iam::732928366374:role/Myredshiftrole'
+delimiter '|' IGNOREHEADER 1 ;
+
+select query, substring(filename,22,25) as filename,line_number as line, 
+substring(colname,0,12) as column, type, position as pos, substring(raw_line,0,30) as line_text,
+substring(raw_field_value,0,15) as field_text, 
+substring(err_reason,0,45) as reason
+from stl_load_errors 
+order by query desc
+limit 1;
+
+COPY projects
+from 's3://forredshiftbuc/projects.csv'
+iam_role 'arn:aws:iam::732928366374:role/Myredshiftrole'
+delimiter '|' IGNOREHEADER 1 ;
+
+begin transaction;
+delete from projects using stage
+where projects.primarykey = stage.primarykey;
+insert into projects select * from stage;
+end transaction;
+
+
+
+CREATE TABLE mytable(
+   id     INTEGER  NOT NULL PRIMARY KEY,
+   name   VARCHAR(29) NOT NULL,
+   amount NUMERIC(6,2) NOT NULL,
+   Remark VARCHAR(45)
+);
+INSERT INTO mytable(id,name,amount,Remark) VALUES (1,'Johnson, Smith, and Jones Co.',345.33,'Pays on time');
+INSERT INTO mytable(id,name,amount,Remark) VALUES (2,'Sam "Mad Dog" Smith',993.44,NULL);
+INSERT INTO mytable(id,name,amount,Remark) VALUES (3,'Barney & Company',0,'Great to work with
+and always pays with cash.');
+INSERT INTO mytable(id,name,amount,Remark) VALUES (4,'Johnson''s Automotive',2344,NULL);
+
+
+arn:aws:iam::732928366374:role/Myredshiftrole
